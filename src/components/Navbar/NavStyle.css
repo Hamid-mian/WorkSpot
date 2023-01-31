@@ -1,0 +1,16 @@
+.nav-item{
+    margin-left: 10px;
+    margin-right: 50px;
+}
+svg{
+    height: 24px;
+    width: 24px;
+}
+.navBar{
+    padding-left: 170px;
+}
+@media screen and (min-width: 1320px) {
+    .navBar{
+      padding-left: 200px;
+    }
+  }
