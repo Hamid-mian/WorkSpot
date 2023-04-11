@@ -1,7 +1,12 @@
+nav{
+    width: 100vw;
+    box-shadow: 0 0px 5px 1px lightgray;
+}
 .nav-item{
     margin-left: 10px;
     margin-right: 50px;
 }
+
 svg{
     height: 24px;
     width: 24px;

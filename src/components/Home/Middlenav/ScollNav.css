@@ -1,0 +1,31 @@
+.sn-status{
+    color: green;
+}
+.s-circle{
+    border-radius: 100px;
+    background-color: green;
+    height: 7px;
+    width: 7px;
+}
+@keyframes slideFilter {
+    0% {
+      transform: translateY(-30%);
+    }
+    100% {
+      transform: translateY(0);
+
+    }
+  }
+#filters-div{
+   
+    animation: 0.9s ease-in-out 0s 1 slideFilter;
+}
+.sn-filters{
+    color: black;
+    padding : 3px;
+    border-radius: 5px;
+}
+.sn-filters:hover{
+    background-color : whitesmoke;
+    border-radius: 5px;
+}

@@ -1,0 +1,58 @@
+@keyframes slidePage {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+.jobPostMain{
+    margin-top: 100px;
+    width: 70%;
+    border-radius: 10px;
+    box-shadow: 0 0 8px 4px lightgray;
+    animation: 1s ease-out 0s 1 slidePage;
+}
+.jp-heading{
+    font-weight: bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+    color: gray;    
+}
+.css-13cymwt-control{
+    /* background-color: whitesmoke;
+    width: 350px; */
+}
+.jp-description{
+    width: 100%;
+}
+.inpt{
+    border: lightgrey 1px solid;
+    border-radius: 7px;
+    max-width: 350px;
+    background-color: whitesmoke;
+}
+.inpt:focus{
+    outline: none;
+    background-color: white;
+    box-shadow: 0px 0px 10px 2px rgba(211, 211, 211, 0.719);
+}
+.inptText{
+    border: lightgrey 1px solid;
+    border-radius: 7px;
+    background-color: whitesmoke;
+}
+.inptText:focus{
+    outline: none;
+    background-color: white;
+    box-shadow: 0px 0px 10px 2px rgba(211, 211, 211, 0.719);
+}
+.jp-btn{
+    border: none;
+    background-color: #00a36a;
+    border-radius: 5px;
+    color: white;
+    font-size: medium;
+    font-weight: 500;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+}

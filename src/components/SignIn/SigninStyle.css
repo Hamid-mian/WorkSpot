@@ -4,13 +4,18 @@ body{
   box-sizing: border-box;
   font-family: sans-serif;
   background-size: cover;
-  background-attachment: fixed;
   /* background-image: url("/public/images/homepagedraft.jpg");  */
 }
-
+.siStyle{
+  background-image: 
+          url('../../Assets/images/homepagedraft.jpg');
+    height: 100vh;
+    margin-top: 70px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 .container{
   justify-content: center;
-  /* align-items: center; */
   margin: 0 auto;
   max-width: 450px;
   height: 500px; 
@@ -55,7 +60,7 @@ label{
   font-size: 12px;
   color: white;
 }
-input{
+.inputs{
   border: none;
   width: 100%;
   border-bottom: 1px solid rgb(167, 87, 87);
