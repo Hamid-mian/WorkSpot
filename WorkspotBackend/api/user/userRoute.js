@@ -31,7 +31,7 @@ router.get("/verifyCode",user_controller.verifyCode);
 
 // router.post("/generateCode",user_controller.generateVerificationCode);
 
-router.get("/login",user_controller.login);
+router.post("/login",user_controller.login);
 //router.get("/loginEmployer",user_controller.loginEmployer);
 
  
