@@ -3,6 +3,7 @@ const app = express();
 const userRouter = require("./api/user/userRoute");
 const homeRouter = require("./api/home/homeRoute");
 const cors =require("cors");
+
 require("dotenv").config();
 app.use(cors());
 app.use(express.json());
