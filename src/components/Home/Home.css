@@ -1,3 +1,17 @@
 body{
-    background-color: #f0f0f0;
+    background-color: whitesmoke;
+}
+.h-shadow{
+    box-shadow: 0 0 8px 2px lightgray;
+}
+@keyframes scrollnavSlide {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+.hp-scrollnav{
+    animation: 1s ease-out 0s 1 scrollnavSlide;
 }

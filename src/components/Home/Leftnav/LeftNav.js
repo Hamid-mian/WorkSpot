@@ -1,8 +1,15 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import './LeftNav.css'
 import { NavLink } from 'react-router-dom'
 
 function LeftNav() {
+
+ 
+  const [user, setUser] = useState({})
+  useEffect(() => {
+    setUser(JSON.parse (localStorage.getItem("user")))
+  }, [])
+  
     
   return (
     <>
@@ -15,9 +22,9 @@ function LeftNav() {
         </div>
       </div>
       <div className="d-flex pt-4 justify-content-center flex-column border-bottom">
-        <p className='fw-bold d-flex justify-content-center' style={{fontSize: "1.2em"}}>Jhon James</p>
-        <span className='d-flex fw-light text-muted justify-content-center mb-4 ps-5 pe-5' style={{fontSize: "0.8em"}}>
-            Creative Thinker | Decor
+        <p className='fw-bold d-flex justify-content-center' style={{fontSize: "1.2em"}}>{user.name?user.name:"Hamid"}</p>
+        <span className='d-flex fw-light text-muted justify-content-center mb-4 px-4' style={{fontSize: "0.8em"}}>
+            Creative Thinker | Decor {user.description}
         </span>
       </div>
     </>

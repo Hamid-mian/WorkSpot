@@ -1,0 +1,62 @@
+.emplr-Dash{
+    margin-top: 200px;
+    display: flex;
+}
+.emplr-leftNav{
+    width: 21vw;
+    /* height: 100vh; */
+    display: flex;
+    flex-direction: column;
+}
+.emplr-leftnav{
+    background-image: url('../../Assets/images/download.jpeg');
+    background-size: 100% 80%;
+    background-repeat: no-repeat;
+    height: 140px;
+}
+.emplr-ln-info{
+    color: white;
+    background-color: #ce6241b4;
+    padding: 0px 5px;
+    width: 100px;
+    height: 20px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 10px;
+}
+.emplr-ln-infoVar{
+    font-size: 0.89rem;
+}
+
+.emplr-rightNav{
+    width: 100vw;
+}
+.dv-cardInfo{
+    font-size: 0.92rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dv-cat{
+    margin-bottom: 7px;
+}
+.dv-varInfo{
+    font-size: 0.8rem;
+    padding: 1px 8px;
+    border-radius: 7px;
+}
+
+@media only screen and (max-width: 992px) {
+    .emplr-ln-info {
+        padding: 0px 5px;
+        width: auto;
+        /* height: 20px; */
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 400;
+    }
+    .emplr-ln-infoVar{
+        font-size: 0.8rem;
+    }
+  }

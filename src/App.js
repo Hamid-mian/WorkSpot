@@ -4,33 +4,32 @@ import SignIn from './components/SignIn/SignIn';
 import Signup from './components/Signup/Signup';
 import HomePage from './components/Home/HomePage';
 import Dashboard from './components/Dashboard/Dashboard';
+import SetProfile from './screens/SetProfile/SetProile'
+import Employerprofile from './screens/SetProfile/Employerprofile'
 import EmployeeDashboard from './components/Dashboard/EmployeeDashboard/EmployeeDashboard';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import JobPost from './screens/JobPost/JobPost';
-//y & rafec components shortcuts
+import DashboardEmployer from "./screens/DashboardEmployer/DashboardEmployer";
 
 function App() {
-  const Screen = ()=>{
-    <div>
-      <Navbar/>
-      <Outlet/>
-    </div>
-  }
+ 
   return (
     
     <>
       <BrowserRouter>
         <Navbar></Navbar> 
         <Routes>
-          <Route path='/a' element = {<SignIn/>} />
-          <Route path='/signUp' element = {<Signup/>} />
-
-          {/* <Route path="" element = {<Screen/>}/> */}
-          <Route path='/' element = {<HomePage/>}/>
           
+          <Route path='/' element = {<SignIn/>} />
+          <Route path='/signUp' element = {<Signup/>} />
+          <Route path='/home' element = {<HomePage/>}/>
+          <Route path="/userVerification" element = {<Signup isVerification />}/>
           <Route path='/emplyDashboard' element = {<EmployeeDashboard/>} />
+          <Route path="/DashboardEmployer" element={<DashboardEmployer/>}/>
           <Route path='/emplyerDashboard' element = {<Dashboard/>} />
           <Route path = "/jobPost" element = {<JobPost/>}/>
+          <Route path ='/setProfile' element = {<SetProfile />}/>
+          <Route path ='/empProfile' element = {<Employerprofile />}/>
         </Routes>
       </BrowserRouter>
     </>

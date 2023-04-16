@@ -1,4 +1,5 @@
 import React from 'react'
+import 'animate.css'
 import PostArea from './PostArea'
 import { useState, useEffect } from 'react'
 import './ScollNav.css'
@@ -50,7 +51,7 @@ const ScrollNav = ({ postData }) => {
     
     return (
         <>
-            <div className='mb-3 border rounded'>
+            <div className='mb-3 border rounded h-shadow'>
                 <div className='d-flex bg-white justify-content-between align-items-center p-3 px-4 mb- rounded' >
                     <div className='rounded-circle'>
                         <img
@@ -77,7 +78,7 @@ const ScrollNav = ({ postData }) => {
                 <div className='filtersBox d-flex bg-white mt-0 p-3 border-top rounded-bottom'>filters will show here</div>
             </div></div>
 
-            <PostArea postData={displayedData} />
+            <PostArea postData={displayedData} apply = {false}/>
             {loading && <div>Loading...</div>}
         </>
     );

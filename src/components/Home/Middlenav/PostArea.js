@@ -1,16 +1,22 @@
-import React from 'react'
-import { BsArrowRightCircle } from "react-icons/bs";
+import React, {useState, useEffect} from 'react'
+import { NavLink} from 'react-router-dom';
+import { BsArrowRightCircle, BsCheck2Circle } from "react-icons/bs";
 
 export default function PostArea({postData}) {
   
   // const {Title, body, id} = postData
+  const [applyCheck, setApplyCheck] = useState(false)
+  useEffect(() => {
+    setApplyCheck(false)
+  }, [])
   
+  // setApplyCheck(props.apply)
   return (
     <>
     {postData.map((curElem)=>{
         return(
           <>
-          <div className="card mb-2" style={{width: "100%"}} key={curElem.id}>
+          <div className="card mb-2 h-shadow" style={{width: "100%"}} key={curElem.id}>
                     <div className="card-body">
                         <h5 className="card-title text-muted">{curElem.job_category}</h5>
                         <h6 className='d-flex py-1 mb-3 justify-content-between'>
@@ -26,7 +32,9 @@ export default function PostArea({postData}) {
                             <b className='text-muted fs-6'>Description: </b>  {curElem.description}
                           </p>
                         
-                        <a href="/" className="btn btn-outline-primary ms-lg-1 link">Apply  <BsArrowRightCircle /></a>
+                        {applyCheck ? <NavLink to="" onClick={()=>{setApplyCheck(false)}} style={{textDecoration: 'none'}} className="btn btn-outline-success ms-lg-1">Applied  <BsCheck2Circle /></NavLink>
+                        :<NavLink to="" onClick={()=>{setApplyCheck(true)}} style={{textDecoration: 'none'}} className="btn btn-outline-primary ms-lg-1">Apply  <BsArrowRightCircle /></NavLink>
+                        }
                     </div>
                 </div>
           </>

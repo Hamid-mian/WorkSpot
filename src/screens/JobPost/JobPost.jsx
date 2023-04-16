@@ -1,6 +1,7 @@
 import React, {useRef, useState} from 'react'
 import Select from 'react-select'
 import "./JobPost.css"
+import Navbar from '../../components/Navbar/Navbar'
 
 function JobPost() {
     const ref = useRef()
@@ -28,12 +29,17 @@ function JobPost() {
 
   return (
     <>
+        <Navbar isEmployer/>
       <div className='jobPostMain bg-white mx-auto p-5 pb-3 mb-5'>
         <h3 className='text-center my-auto jp-heading'>Post Your Job</h3>
 
         <form onSubmit={handleSubmit} className="jp-inputFields mt-4 p-3">
             <div className='text-center my-auto'>
                 <input type="text" placeholder='Title' className='jp-title my-3 p-2 w-50 inpt' />
+                {/* <div className='d-flex justify-content-between'>
+                    <input type="text" placeholder='Title' className='jp-title my-3 p-2 w-50 inpt' />
+                    <input type="text" placeholder='Offer in PKR' className='jp-title my-3 p-2 w-50 inpt' />
+                </div> */}
                 <Select placeholder = 'Tags' onChange={handleTagsChange}
                     // defaultValue={"Tags"}
                     isMulti

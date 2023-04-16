@@ -9,6 +9,9 @@ function EmployeeDashboard() {
       <main className='container-fluid my-5'>
             <div className="row p-0 py-3">
                 <NavLink to="/emplyerDashboard">emplrDash</NavLink>
+                <NavLink to='/setProfile'> Profile page</NavLink>
+                <NavLink to='/empProfile'> EMpProfile page</NavLink>
+                <NavLink to='/DashboardEmployer'>DashboardEmployerN</NavLink>
                 <div className="col-4 ms-1 p-2 ps-lg-5 bg-danger">
                     <Sidebar></Sidebar>
                 </div>
