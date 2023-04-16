@@ -33,14 +33,14 @@ module.exports = {
       port: 587,
       secure: false,
       auth: {
-          user: 'hamidiqbal261261@gmail.com',
-          pass: 'eeweahndsliahwwi'
+          user: 'workspot.fyp@gmail.com',
+          pass: 'waodwxuuwmjsfvqx'
       },
        timeout: 5000 // 5 seconds
   });
 
   let mailOptions = {
-    from: 'hamidiqbal261261@gmail.com',
+    from: 'workspot.fyp@gmail.com',
    // to: 'bitf19a026@pucit.edu.pk',
     to: data.email,
     subject: 'Worksopt',
