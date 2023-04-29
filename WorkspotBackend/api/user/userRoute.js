@@ -4,22 +4,22 @@ const router = require("express").Router();
 const user_controller=require("./userController");
 
 
-// //........................multer for image storage ..................
-// const multer = require("multer");
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, "./upload/"+ Paths.Paths.USER_IMAGE);
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
-//     },
-// });
-// var uploadSingle = multer({
-//     storage: storage,
-// }).single("image_path");
-// var upload = multer({
-//     storage: storage,
-// }).array("image_path");
+//........................multer for image storage ..................
+const multer = require("multer");
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./upload/"+ Paths.Paths.USER_IMAGE);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
+    },
+});
+var uploadSingle = multer({
+    storage: storage,
+}).single("image_path");
+var upload = multer({
+    storage: storage,
+}).array("image_path");
 
 
 router.post("/post", user_controller.post);

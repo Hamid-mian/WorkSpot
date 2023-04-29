@@ -17,7 +17,24 @@ module.exports={
         })
     },
 
-    getAllCards:(req,res)=>{
+    jobPostUpdate:(req,res)=>{
+        const body=req.body;
+        service.jobPostUpdate(body,(err,result)=>{
+            if(err){
+                const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            if(result==0)
+            {
+                const data=common.error(Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.not_exist, )
+                return res.json({data});
+            }
+            const data=common.success(result,Messages.Messages.MSG_SUCCESS,enums.ErrorCode.success);
+            res.json({data});
+
+        })
+    },
+    getAllPost:(req,res)=>{
         const body=req.body;
         if(!body.page||isNaN(body.page)||body.page<0)
         {
@@ -27,7 +44,7 @@ module.exports={
         {
             body.limit=5;
         }
-        service.getAllCards(body,(err,result)=>{
+        service.getAllPost(body,(err,result)=>{
             if(err)
             {
                 const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);

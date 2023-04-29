@@ -6,7 +6,8 @@ const Controller=require("./homeController");
 
 
 router.post("/jobpost",Controller.jobPost);
-router.get("/getAllCards",Controller.getAllCards);
+router.post("/jobPostUpdate",Controller.jobPostUpdate);
+router.get("/getAllPost",Controller.getAllPost);
 
 
 module.exports=router;

@@ -46,6 +46,8 @@ module.exports={
                     {
                       return callback(error,null);
                     }
+                    data.code=randomNumber;
+                    helper.sendingEmail(data);
                     return callback(null,results)
                   }
                 )
