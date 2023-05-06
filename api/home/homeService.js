@@ -206,12 +206,6 @@ module.exports={
         )
         },
 
-    //deleting job post
-    // deletePost:(body,callback)=>{
-    //   pool.query(
-    //     `select * from jobpost where id=?`,
-    //     [body.id],
-    //     (error,result)=>{
-    // }
+    
 
 }
