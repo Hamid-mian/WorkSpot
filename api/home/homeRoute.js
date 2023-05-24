@@ -10,4 +10,5 @@ router.post("/jobPostUpdate",Controller.jobPostUpdate);
 router.get("/getAllPost",Controller.getAllPost);
 
 
+
 module.exports=router;

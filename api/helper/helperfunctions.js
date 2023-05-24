@@ -1,5 +1,6 @@
 const { pool } = require("../../config/database");
 const nodemailer = require('nodemailer');
+const admin = require('firebase-admin');
 // const cors = require("cors");
 // const admin = require('firebase-admin');
 // const serviceAccount = require('../google-services.json');
@@ -168,7 +169,7 @@ transporter.sendMail(mailOptions, function(error, info) {
   sendNotification: function (user_id, body, title) {
     // Initialize the Firebase Admin SDK
     admin.initializeApp({
-      credential: admin.credential.cert('./tip-in-f760d-firebase-adminsdk-2t32f-3f9db07a58.json'),
+      credential: admin.credential.cert(require('../../workspot.json')),
       // databaseURL: "https://<DATABASE_NAME>.firebaseio.com"
     });
 
@@ -176,7 +177,7 @@ transporter.sendMail(mailOptions, function(error, info) {
 
     const userId = user_id;
     // Retrieve the device tokens for the specified user from the MySQL database
-    pool.query(`SELECT device_token FROM tbl_user WHERE id='${userId}'`, (error, results) => {
+    pool.query(`SELECT device_token FROM user WHERE id='${userId}'`, (error, results) => {
       if (error) throw error;
       if (results.length === 0) return;
 
@@ -200,6 +201,47 @@ transporter.sendMail(mailOptions, function(error, info) {
       });
     });
   },
+  
+
+
+   countMatchingElements: function(arr1, arr2) {
+    // Create a Set to store unique elements from arr1
+    const set = new Set(arr1);
+  
+    let count = 0;
+  
+    // Iterate over the elements of arr2
+    for (let i = 0; i < arr2.length; i++) {
+      // Check if the current element of arr2 is in the set
+      if (set.has(arr2[i])) {
+        count++;
+      }
+    }
+  
+    return count;
+  },
+
+  calculateTotalAmount: function(startTime, endTime, startDate, endDate, rate) {
+    const startDateTime = new Date(startDate + 'T' + startTime);
+    const endDateTime = new Date(endDate + 'T' + endTime);
+  
+    // Calculate the difference in milliseconds between the start and end dates
+    const timeDiff = endDateTime - startDateTime;
+  
+    // Calculate the number of days between the start and end dates
+    const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+    // Calculate the number of hours per day
+    const hoursPerDay = endDateTime.getHours() - startDateTime.getHours();
+  
+    // Calculate the total hours
+    const totalHours = hoursPerDay * days;
+  
+    // Calculate the total amount
+    const totalAmount = totalHours * rate;
+  
+    return totalAmount;
+  }
   
   
 }

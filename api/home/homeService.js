@@ -47,9 +47,9 @@ module.exports={
                     foreach(tag in data.tag)
                     {
                       pool.query(
-                        `insert into jobpost_tag(name, jobpost_id) values(?,?)`,
+                        `insert into jobpost_tag(tag_id, jobpost_id) values(?,?)`,
                         [
-                          tag.name,
+                          tag.tag_id,
                           result.insertId
                         ],
                         (err,result)=>{
@@ -57,9 +57,27 @@ module.exports={
                           {
                             return callback(err,null);
                           }
-                          return callback(null,result);
                         })
                     }
+                    //this query is used to get all tags of employees
+                    // pool.query(
+                    //  `select tag_id, employee_id from employee_tag groupBy employee_id`,
+                    //  [],
+                    //  (err,result)=>{
+                    //   if(err)
+                    //   {
+                    //     return callback(err,null);
+                    //   }
+                    //   const numbers = [];
+                    //   var i=0;
+                    //   foreach(tag in result)
+                    //   {
+                    //    //here you need to store count and id of employee then apply algorithem
+                    //    number[i]= helper.countMatchingElements(data.tag,tag.tag_id)
+                    //    i++
+                    //   }
+                    // })
+                    return callback(null,result);
                 }
             )
 
@@ -205,7 +223,31 @@ module.exports={
           }
         )
         },
-
+    
+    //get all tags
+    getAllTags: (body,callback)=>{
+    pool.query(
+      `select id from lookup where name = "tag" `,
+      [],
+      (err,result)=>{
+        if(err)
+        {
+          return callback(err,null);
+        }
+        pool.query(
+          `select * from lookup where parent_id=?`,
+          [result[0].id],
+          (error,result)=>{
+            if(error)
+            {
+              return callback(error,null);
+            }
+            return callback(null,result);
+          }
+        )
+      }
+    )
+    }
     
 
 }
