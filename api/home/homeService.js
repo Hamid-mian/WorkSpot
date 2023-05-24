@@ -247,7 +247,32 @@ module.exports={
         )
       }
     )
-    }
+    },
+
+    //get all skills
+    getAllSkills: (body,callback)=>{
+      pool.query(
+        `select id from lookup where name = "skill" `,
+        [],
+        (err,result)=>{
+          if(err)
+          {
+            return callback(err,null);
+          }
+          pool.query(
+            `select * from lookup where parent_id=?`,
+            [result[0].id],
+            (error,result)=>{
+              if(error)
+              {
+                return callback(error,null);
+              }
+              return callback(null,result);
+            }
+          )
+        }
+      )
+      }
     
 
 }
