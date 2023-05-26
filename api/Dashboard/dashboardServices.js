@@ -6,6 +6,11 @@ const helperfunctions = require("../helper/helperfunctions");
 
 module.exports={
 
+
+    // ..........................Hired Profile.........................................
+
+    //when ever an employee get hired data saved in hired profile and notification generated
+
     hiredProfile:(data,callback)=>{
         pool.query(
             `select jobpost_id from notification where id=?`,
@@ -80,11 +85,10 @@ module.exports={
                                             " has selected you for the job "+job_post_name;
                                             
                                             pool.query(
-                                                `insert into notification (title, body, status, sender_id, reciever_id, jobpost_id, hiredprofile_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?,?,?)`,
+                                                `insert into notification (title, body, sender_id, reciever_id, jobpost_id, hiredprofile_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?,?)`,
                                                 [
                                                     Messages.Messages.MSG_NOTIFICATION_HIRED,
                                                     body,
-                                                    13,
                                                     data.employer_id,
                                                     data.employee_id,
                                                     result[0].jobpost_id,
@@ -115,8 +119,11 @@ module.exports={
         )
     },
  
+    //..........................Dash Board API................................................
     dashboardApi:(data,callback)=>
     {
+
+        //when ever user load dashboard job statuses updated on the bases of current date
         pool.query(
             `update hired_profile h join jobpost j on h.job_post_id = j.id set h.status_id=12 where j.start_date<? and j.end_date>?`,
             [                           
@@ -141,7 +148,10 @@ module.exports={
             }
         )
 
-                            
+                     
+        //getting all required data to employee or employer
+
+        //seeking is the required user id employee or employer
          pool.query
          (
              `select user_identity from user where id=?`,
@@ -152,8 +162,11 @@ module.exports={
                  {
                     return callback(err,null);
                  }
+
+                 //if user is employee then getting required data for employee 
                  if(result_user_identity[0].user_identity=="employee")
                  {
+                   //getting total jobs of an employee for order
                      pool.query(
                          `select count (*) as total from hired_profile where employee_id=?`,
                          [data.user_id],
@@ -163,6 +176,7 @@ module.exports={
                              {
                                  return callback(error,null);
                              }
+                             //getting completed jobs of an employee for order
                              pool.query(
                                  `select count(*) as complete from hired_profile where employee_id=? and status_id=14 `,
                                  [
@@ -174,7 +188,10 @@ module.exports={
                                      {
                                          return callback(error,null);
                                      }
+                                     //calculating order percentage
                                      let order=helperfunctions.percentageCalculate(totalCount[0].total,completeCount[0].complete);
+                                    
+                                     //getting employee data from different tables
                                      pool.query(
                                          `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from hired_profile h join user u on h.employer_id=u.id join jobpost j on h.job_post_id=j.id join employer e on u.id=e.user_id where h.employee_id=?`,
                                          [data.user_id],
@@ -202,10 +219,11 @@ module.exports={
                          }
          
                      )
-         
-         
-                    
+          
                  }
+
+                 //if user is employer then getting required data for employer
+                 
                  if(result_user_identity[0].user_identity=="employer")
                  {
                      pool.query(
@@ -231,10 +249,82 @@ module.exports={
                  }
             }
        )
-    }
+    },
     
+    //..........................Notification generating when ever an employee showed interest on job post.............
+    applyJob:(data,callback)=>{
+        //only two inputs are here jobpost_id and employee_id
+        //getting employee name to use it in title and body of notification
+        var employee_name;
+        pool.query(`select name from employee where user_id=?`,
+        [data.employee_id],
+        (e,r)=>
+        {
+            if(e)
+            {return callback(e,null);} 
+            employee_name=r[0].name;
 
+            //title of notification
+            var title=employee_name+ " is interested";
 
+            //getting title of jobpost which will serve in body of notification and employer id
+            //to use it to get employer name which will also be used inside body also id will be used
+            //in reciever id
+            var job_post_name;
+            pool.query(
+                `select title, employer_id from jobpost where id=?`,
+                [data.jobpost_id],
+                (e,r)=>{
+                    if(e)
+                    {return callback(e,null);} 
+                    job_post_name=r[0].title;
+                   
+                    //getting employer user_id and name 
+
+                    pool.query(
+                        `select user_id, name from employer where id=? `,
+                        [r[0].employer_id],
+                        (er,re)=>{
+                            if(er)
+                            {
+                                return callback(er,null);
+                            }
+
+                            //making the body of notification
+                            var employer_name=re[0].name;
+                            var employer_id=re[0].user_id;
+                            var body="Hey "+employer_name+
+                            "! "+employee_name+" showed interest on your job "+job_post_name;
+
+                            //saving data in to the notification table
+                            pool.query(
+                                `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                                [
+                                    title,
+                                    body,
+                                    data.employee_id,
+                                    employer_id,
+                                    data.jobpost_id,
+                                    17,
+                                    new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                    1
+                                ],
+                                (error_inserts,result_inserts)=>
+                                {
+                                    if(error_inserts)
+                                    {
+                                        return callback(error_inserts,null);
+                                    }
+                                    return callback(null,result_inserts);
+                                }
+                            )
+                        }
+                    )
+                   
+                } )
+       
+        })
+    }
 
 }
 
