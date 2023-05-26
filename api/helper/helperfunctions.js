@@ -241,6 +241,12 @@ transporter.sendMail(mailOptions, function(error, info) {
     const totalAmount = totalHours * rate;
   
     return totalAmount;
+  },
+
+  percentageCalculate: function(total, num)
+  {
+    let num3=(num/total)*100;
+    return num3;
   }
   
   

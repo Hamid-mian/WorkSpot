@@ -20,4 +20,22 @@ module.exports={
             res.json({data});
         })
     },
+
+    dashboardApi:(req,res)=>
+    {
+        const body =req.body;
+        service.dashboardApi(body,(err,result)=>{
+            if(err){
+                const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            if(result==null){
+                const data=common.error(err,Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            const data=common.success(result,Messages.Messages.MSG_DATA_FOUND,enums.ErrorCode.success);
+            res.json({data});
+        })
+       
+    }
 }
