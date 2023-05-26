@@ -95,10 +95,12 @@ module.exports={
         )
 
                             
-         pool.query(
+         pool.query
+         (
              `select user_identity from user where id=?`,
             [data.user_id],
-             (err,result_user_identity)=>{
+             (err,result_user_identity)=>
+             {
                if(err)
                  {
                     return callback(err,null);
@@ -127,7 +129,7 @@ module.exports={
                                      }
                                      let order=helperfunctions.percentageCalculate(totalCount[0].total,completeCount[0].complete);
                                      pool.query(
-                                         `select h.status_id, h.price, e.name, j.title, j.end_date from hired_profile h join user u on h.employer_id=u.id join jobpost j on h.job_post_id=j.id join employer e on u.id=e.user_id where h.employee_id=?`,
+                                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from hired_profile h join user u on h.employer_id=u.id join jobpost j on h.job_post_id=j.id join employer e on u.id=e.user_id where h.employee_id=?`,
                                          [data.user_id],
                                          (error,result)=>
                                          {
@@ -140,6 +142,7 @@ module.exports={
                                                  status_id:result[0].status_id,
                                                  price:result[0].price,
                                                  employer_name:result[0].employer_name,
+                                                 image_path:result[0].image_path,   
                                                  title:result[0].title,
                                                  end_date:result[0].end_date,
                                              }
@@ -159,7 +162,7 @@ module.exports={
                  if(result_user_identity[0].user_identity=="employer")
                  {
                      pool.query(
-                         `select h.status_id, h.price, e.name, j.title, j.end_date from hired_profile h join user u on h.employee_id=u.id join jobpost j on h.job_post_id=j.id join employee e on u.id=e.user_id where h.employer_id=?`,
+                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from hired_profile h join user u on h.employee_id=u.id join jobpost j on h.job_post_id=j.id join employee e on u.id=e.user_id where h.employer_id=?`,
                          [data.user_id],
                          (error,result)=>
                          {
@@ -171,6 +174,7 @@ module.exports={
                                  status_id:result[0].status_id,
                                  price:result[0].price,
                                  employer_name:result[0].employer_name,
+                                 image_path:result[0].image_path,
                                  title:result[0].title,
                                  end_date:result[0].end_date,
                              }
@@ -178,9 +182,10 @@ module.exports={
                          }
                      )
                  }
+            }
+       )
     }
-)
-    }
+
 
 
 }

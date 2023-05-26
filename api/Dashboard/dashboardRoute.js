@@ -6,7 +6,7 @@ const Controller=require("./dasboardController");
 
 
 router.post("/hiredProfilePost",Controller.hiredProfile);
-router.post(`/dashboardApi`,Controller.dashboardApi);
+router.get(`/dashboardApi`,Controller.dashboardApi);
 
 
 module.exports=router;
