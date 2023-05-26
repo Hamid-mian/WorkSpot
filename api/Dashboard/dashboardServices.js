@@ -1,4 +1,5 @@
 const pool =require("../../config/database");
+const Messages = require("../helper/constants/Messages");
 const paths=require("../helper/constants/Paths");
 const helper=require("../helper/helperfunctions");
 const helperfunctions = require("../helper/helperfunctions");
@@ -19,7 +20,6 @@ module.exports={
                 {
                     return null;
                 }
-                console.log("job post id is",result[0].jobpost_id);
                 pool.query(
                     `select * from jobpost where id=?`,
                     [
@@ -59,7 +59,54 @@ module.exports={
                                 {
                                     return callback(error_insert,null);
                                 }
-                                return callback(null,result_insert);
+                                var employer_name="hy";
+                                pool.query(`select name from employer where user_id=?`,
+                                [data.employer_id],
+                                (e,r)=>
+                                {
+                                    if(e)
+                                    {return callback(e,nul);} 
+                                    employer_name=r[0].name;
+                                    var job_post_name;
+                                    pool.query(
+                                        `select title from jobpost where id=?`,
+                                        [result[0].jobpost_id],
+                                        (e,r)=>{
+                                            if(e)
+                                            {return callback(e,nul);} 
+                                            job_post_name=r[0].title;
+                                            var body=
+                                            "Congratulations "+employer_name+
+                                            " has selected you for the job "+job_post_name;
+                                            
+                                            pool.query(
+                                                `insert into notification (title, body, status, sender_id, reciever_id, jobpost_id, hiredprofile_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?,?,?)`,
+                                                [
+                                                    Messages.Messages.MSG_NOTIFICATION_HIRED,
+                                                    body,
+                                                    13,
+                                                    data.employer_id,
+                                                    data.employee_id,
+                                                    result[0].jobpost_id,
+                                                    result_insert.insertId,
+                                                    18,
+                                                    new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                                    1
+                                                ],
+                                                (error_inserts,result_inserts)=>
+                                                {
+                                                    if(error_inserts)
+                                                    {
+                                                        return callback(error_inserts,null);
+                                                    }
+                                                    return callback(result_inserts);
+                                                }
+                                            )
+                                        } )
+                               
+                                })
+                               
+                               
                             }
                         )
                     }
@@ -185,6 +232,7 @@ module.exports={
             }
        )
     }
+    
 
 
 
