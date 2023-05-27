@@ -8,7 +8,7 @@ module.exports={
 
     jobPost:(data,callback)=>{
       pool.query(
-        `select * from user where email=?`,
+        `select id from user where email=?`,
         [data.email],
         (error,result)=>{
           if(error)
@@ -16,25 +16,25 @@ module.exports={
             return callback(error,null);
           }
           pool.query(
-            `select * from employer where user_id=?`,
+            `select id from employer where user_id=?`,
             [result[0].id],
             (error,results)=>{
               if(error)
               {
                 return callback(error,null);
-              }
+              } 
               pool.query(
-                `insert into jobpost(Employer_id,title,description,location,start_time,end_time,duration,start_date,end_date,rate,created_on,updated_on,action_type) values(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+                `insert into jobpost(Employer_id,title,description,location,start_time,end_time,start_date,end_date,rate,req_employee,created_on,updated_on,action_type) values(?,?,?.?,?,?,?,?,?,?,?,?,?)`,
                 [
-                    results[0].id,
+                  results[0].id,
                     data.title,
                     data.description,
                     data.location,
                     data.startTime,
                     data.endTime,
-                    data.duration,
                     data.startDate,
                     data.endDate,
+                    data.req_employee,
                     data.rate,
                     new Date().toISOString().substring(0, 19).replace('T', ' '),
                     new Date().toISOString().substring(0, 19).replace('T', ' '),
@@ -44,7 +44,7 @@ module.exports={
                     if(err){
                         return callback(err,null);
                     }
-                    foreach(tag in data.tag)
+                    for (const tag of data.tag)
                     {
                       pool.query(
                         `insert into jobpost_tag(tag_id, jobpost_id) values(?,?)`,
@@ -150,13 +150,17 @@ module.exports={
             values.push(data.endDate);
             isFirst=false;
           }
-
+          if(data.req_employee){
+            query+=`${isFirst ? ' ': ' '}req_employee = ?, `;
+            values.push(data.req_employee);
+            isFirst=false;
+          }
           //updating tags
 
           if(data.tag)
           {
-            foreach(tag in data.tag)
-                    {
+            for (const tag of data.tag)
+            {
                       pool.query(
                         `update jobpost_tag set name=? where jobpost_id=? `,
                         [tag.name,data.id],
@@ -196,32 +200,42 @@ module.exports={
     //getting all posts
     getAllPost: (body, callback) => {
   
-        const startingLimit=(body.page-1)*body.limit;
-        pool.query(
-          `select * from jobpost where action_type	<> 3 LIMIT ${startingLimit},${body.limit}  `,
-          [],
-          (err, result)=>{
-            if (err){
-              return callback(err,null);
-            } 
-            pool.query(
-              `select count(*) from jobpost where action_type <> 3 `,
-              [],
-              (error,results)=>
-              {
-                if(error){
-                  return callback(error,null);
-                }
-      
-                const data={
-                  users:result,
-                  totalCount:results[0]["count(*)"],
-                }
-                return callback(null,data);
+      pool.query(
+        `update jobpost set jobpost_status =0 where end_date<?`,
+        [new Date().toISOString().substring(0.19).replace(`T`, ` `)],
+      (errr, resultr) => {
+        if (errr) {
+          return callback(errr,null);
+      }
+      const startingLimit=(body.page-1)*body.limit;
+      pool.query(
+        `select * from jobpost where action_type	<> 3 LIMIT ${startingLimit},${body.limit}  `,
+        [],
+        (err, result)=>{
+          if (err){
+            return callback(err,null);
+          } 
+          pool.query(
+            `select count(*) from jobpost where action_type <> 3 `,
+            [],
+            (error,results)=>
+            {
+              if(error){
+                return callback(error,null);
               }
-            )
-          }
-        )
+    
+              const data={
+                users:result,
+                totalCount:results[0]["count(*)"],
+              }
+              return callback(null,data);
+            }
+          )
+        }
+      )
+      }
+      )
+       
         },
     
     //get all tags

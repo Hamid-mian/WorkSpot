@@ -6,21 +6,21 @@ const service=require("./dashboardServices");
 module.exports={
 
     // ...........................Hired Profile.................................
-    hiredProfile:(req,res)=>{
-        const body=req.body;
-        service.hiredProfile(body,(err,result)=>{
-            if(err){
-                const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
-                return res.json({data});
-            }
-            if(result==null){
-                const data=common.error(err,Messages.Messages.MSG_ALREADY_EXIST,enums.ErrorCode.failed);
-                return res.json({data});
-            }
-            const data=common.success(result,Messages.Messages.MSG_SUCCESS,enums.ErrorCode.success);
-            res.json({data});
-        })
-    },
+    hiredProfile: (req, res) => {
+        const body = req.body;
+        service.hiredProfile(body, (err, result) => {
+          if (err) {
+            const data = common.error(err, Messages.Messages.MSG_DB_CONNECTION_ERROR, enums.ErrorCode.failed);
+            res.json(data);
+          } else if (result == null) {
+            const data = common.error(err, Messages.Messages.MSG_ALREADY_EXIST, enums.ErrorCode.failed);
+            res.json(data);
+          } else {
+            const data = common.success(result, Messages.Messages.MSG_SUCCESS, enums.ErrorCode.success);
+            res.json(data);
+          }
+        });
+      },
 
     //............................DashBoard users................................
     dashboardApi:(req,res)=>

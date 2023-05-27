@@ -23,7 +23,7 @@ module.exports={
                     return callback(error,null);
                 }
                 pool.query(
-                    `select * from hired_profile where job_post_id=? and employee_id=? and employer_id=?`,
+                    `select count(*) as hired from hired_profile where job_post_id=? and employee_id=? and employer_id=?`,
                     [
                         result[0].jobpost_id,
                         data.employee_id,
@@ -35,7 +35,7 @@ module.exports={
                         {
                             return callback(error,null);
                         }
-                        if(resul==null)
+                        if(resul[0].hired<1)
                         {
                             pool.query(
                                 `select * from jobpost where id=?`,
@@ -115,7 +115,20 @@ module.exports={
                                                                 {
                                                                     return callback(error_inserts,null);
                                                                 }
-                                                                return callback(result_inserts);
+                                                                pool.query(
+                                                                    `UPDATE jobpost SET hired_employee = hired_employee + 1 WHERE id = ? `,
+                                                                    [
+                                                                        result[0].jobpost_id,
+                                                                     ],
+                                                                     (error_udate,result_update)=>{
+                                                                        if(error_udate)
+                                                                        {
+                                                                            return callback(error_udate,null);
+                                                                        }
+                                                                        return callback(result_inserts);
+                                                                     }
+
+                                                                )
                                                             }
                                                         )
                                                     } )
@@ -129,6 +142,7 @@ module.exports={
                             )
                         }
                         else{
+                        //    console.log(resul[0].price);
                             return callback(null,null);
                         }
                     }
@@ -369,6 +383,7 @@ module.exports={
       
     }
 
+    
 }
 
 
