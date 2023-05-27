@@ -34,7 +34,7 @@ module.exports = {
       secure: false,
       auth: {
           user: 'workspot.fyp@gmail.com',
-          pass: 'waodwxuuwmjsfvqx'
+          pass: 'yqdkgjvsvnidesmp'
       },
        timeout: 5000 // 5 seconds
   });
