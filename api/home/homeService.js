@@ -209,7 +209,7 @@ module.exports={
       }
       const startingLimit=(body.page-1)*body.limit;
       pool.query(
-        `select * from jobpost where action_type	<> 3 LIMIT ${startingLimit},${body.limit}  `,
+        `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.action_type	<> 3 Order By j.id desc LIMIT ${startingLimit},${body.limit}  `,
         [],
         (err, result)=>{
           if (err){
