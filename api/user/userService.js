@@ -31,7 +31,11 @@ module.exports={
             {
               if (err) 
               {
-              return callback(err, null);
+                let finalResult={
+                  err_code:enums.NotFound.duplicateMail
+                  
+                }
+              return callback(null, finalResult);
               }
               if(data.user_identity=='employee')
               {

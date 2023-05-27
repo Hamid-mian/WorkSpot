@@ -238,6 +238,23 @@ module.exports={
        
         },
     
+
+    getPostById: (body, callback)=>
+    {
+      pool.query(
+        `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.id = ?`,
+        [body.jobPost_id],
+        (err, result)=>{
+          if(err)
+          {
+            return callback(err,null);
+          }
+          console.log(result[0].image_path)
+          return callback(null,result);
+        }
+      )
+    },
+
     //get all tags
     getAllTags: (body,callback)=>{
     pool.query(

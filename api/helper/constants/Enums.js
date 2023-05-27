@@ -77,6 +77,7 @@ module.exports = {
         Time:22,
         Email:23,
         Password:24,
+        duplicateMail:25,
     }
 
 }

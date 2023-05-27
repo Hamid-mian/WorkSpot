@@ -19,6 +19,11 @@ module.exports={
                 const data=common.error(messages.Messages.MSG_NO_ID,enums.ErrorCode.failed);
                 return res.json({data});
             }
+            if(result.err_code==enums.NotFound.duplicateMail)
+            {
+                const data=common.error(messages.Messages.MSG_Mail_already_exist,enums.ErrorCode.failed);
+                return res.json({data});
+            }
             const data=common.success(result,messages.Messages.MSG_SUCCESS,enums.ErrorCode.success);
             return res.json({data});
         })
@@ -142,6 +147,7 @@ module.exports={
             const data=common.error(messages.Messages.MSG_NO_ID,enums.ErrorCode.failed);
             return res.json({data});
         }
+        
         if(result==0)
         {
             const data=common.error(messages.Messages.MSG_NO_RECORD,Enums.ErrorCode.not_exist,);

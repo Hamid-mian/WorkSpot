@@ -59,6 +59,18 @@ module.exports={
             res.json({data});
         })
     },
+    getPostById:(req,res)=>{
+        const body=req.body;
+        service.getPostById(body,(err,result)=>{
+            if(err)
+            {
+                const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            const data=common.success(result,Messages.Messages.MSG_DATA_FOUND,enums.ErrorCode.success);
+            res.json({data});
+    })
+    },
 
     getAllTags:(req,res)=>{
         const body=req.body;
