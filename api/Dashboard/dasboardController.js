@@ -14,7 +14,7 @@ module.exports={
                 return res.json({data});
             }
             if(result==null){
-                const data=common.error(err,Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.failed);
+                const data=common.error(err,Messages.Messages.MSG_ALREADY_EXIST,enums.ErrorCode.failed);
                 return res.json({data});
             }
             const data=common.success(result,Messages.Messages.MSG_SUCCESS,enums.ErrorCode.success);
@@ -51,7 +51,7 @@ module.exports={
                 return res.json({data});
             }
             if(result==null){
-                const data=common.error(err,Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.failed);
+                const data=common.error(err,Messages.Messages.MSG_ALREADY_EXIST,enums.ErrorCode.failed);
                 return res.json({data});
             }
             const data=common.success(result,Messages.Messages.MSG_SAVED,enums.ErrorCode.success);

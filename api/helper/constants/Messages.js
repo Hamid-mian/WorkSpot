@@ -42,6 +42,6 @@ module.exports = {
                 MSG_DB_CONNECTION_SUCCESS: "Database Connection Successful",
                 MSG_DB_CONNECTION_ERROR: "Database Connection Error",
                 MSG_NOT_VERIFIED:"User Is not verified",
-                MSG_NOTIFICATION_HIRED:"Job Post",
+                MSG_NOTIFICATION_HIRED:"Job Offer",
         }       
 }
