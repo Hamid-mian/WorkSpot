@@ -47,13 +47,17 @@ module.exports ={
                 const data=common.error(err,messages.Messages.MSG_INVALID_DATA,Enums.ErrorCode.failed);
                 return res.json({data});
             }
-            if(!result)
+            if(result==null)
             {
                 const data=common.error(messages.Messages.MSG_NO_RECORD,Enums.ErrorCode.not_exist,);
                 return res.json({data});
             }
-            const data=common.success(result,messages.Messages.MSG_CODE_MATCHED_SUCCESSFULLY,Enums.ErrorCode.success);
-            return res.json({data});
+            if(result!=null)
+            {
+                const data=common.success(result,messages.Messages.MSG_DATA_FOUND,Enums.ErrorCode.success);
+                return res.json({data});
+            }
+           
            });  
         },
 }

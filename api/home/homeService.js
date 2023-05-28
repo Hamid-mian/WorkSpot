@@ -7,6 +7,8 @@ module.exports={
     //Posting a new job
 
     jobPost:(data,callback)=>{
+
+    
       pool.query(
         `select id from user where email=?`,
         [data.email],
@@ -15,16 +17,19 @@ module.exports={
           {
             return callback(error,null);
           }
+
+          //if user exists then get the id and name of the employer as we need it in jobpost
           pool.query(
-            `select id from employer where user_id=?`,
+            `select id, name from employer where user_id=?`,
             [result[0].id],
             (error,results)=>{
               if(error)
               {
                 return callback(error,null);
               } 
+              //know we have the complete data know post the job
               pool.query(
-                `insert into jobpost(Employer_id,title,description,location,start_time,end_time,start_date,end_date,rate,req_employee,created_on,updated_on,action_type) values(?,?,?.?,?,?,?,?,?,?,?,?,?)`,
+                `insert into jobpost(Employer_id,title,description, location,start_time,end_time,start_date,end_date,rate,req_employee,created_on,updated_on,action_type) values(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
                 [
                   results[0].id,
                     data.title,
@@ -34,50 +39,360 @@ module.exports={
                     data.endTime,
                     data.startDate,
                     data.endDate,
-                    data.req_employee,
                     data.rate,
+                    data.req_employee,
                     new Date().toISOString().substring(0, 19).replace('T', ' '),
                     new Date().toISOString().substring(0, 19).replace('T', ' '),
                     1
                 ],
-                (err,result)=>{
+                (err,resultss)=>{
                     if(err){
                         return callback(err,null);
                     }
                     for (const tag of data.tag)
                     {
+                      //
+                      // insert tags of jobpost
                       pool.query(
                         `insert into jobpost_tag(tag_id, jobpost_id) values(?,?)`,
                         [
                           tag.tag_id,
-                          result.insertId
+                          resultss.insertId
                         ],
-                        (err,result)=>{
+                        (err,resultee)=>{
                           if(err)
                           {
                             return callback(err,null);
                           }
                         })
                     }
-                    //this query is used to get all tags of employees
-                    // pool.query(
-                    //  `select tag_id, employee_id from employee_tag groupBy employee_id`,
-                    //  [],
-                    //  (err,result)=>{
-                    //   if(err)
-                    //   {
-                    //     return callback(err,null);
-                    //   }
-                    //   const numbers = [];
-                    //   var i=0;
-                    //   foreach(tag in result)
-                    //   {
-                    //    //here you need to store count and id of employee then apply algorithem
-                    //    number[i]= helper.countMatchingElements(data.tag,tag.tag_id)
-                    //    i++
-                    //   }
-                    // })
+
+                    //filer 5
+                    //after inserting tags know with the help of query match employee tags and jobpost tags if matching entries are more then 5 then get 
+                    //employee name and id of those employees
+                    pool.query(
+                      `SELECT employee.user_id, employee.name FROM employee_tag e1 
+                      JOIN employee_tag e ON e1.employee_id = e.employee_id 
+                      JOIN employee ON employee.id = e.employee_id 
+                      WHERE e1.tag_id 
+                      IN ( SELECT tag_id FROM jobpost_tag WHERE jobpost_id = ? ) 
+                      GROUP BY e.employee_id HAVING COUNT(DISTINCT e1.tag_id) >= 5;
+                      `,
+                      [   
+                         resultss.insertId
+                      ],
+                      (error_filter_5,result_filter_5)=>
+                      { 
+
+
+                       if(error_filter_5)
+                       {
+                        return callback(error_filter_5,null);
+                       }
+                       //checks if no of employees query got is less then 5 times of total required employees then send them all notifications and further go on to 
+                       //get those employees with 4 tags maching
+                       var count=0;
+                       if(result_filter_5.length<data.req_employee*5)
+                       { 
+                        //know make body of the notification
+                        for(const item of result_filter_5)
+                        {
+                             //making the body of notification
+                             var employee_name=item.name;
+                             var employee_id=item.user_id;
+                             var body="Hey "+employee_name+
+                             "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+
+                             // send all of them notifications
+                          pool.query(
+                            `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                            [
+                                data.title,
+                                body,
+                                result[0].id,
+                                employee_id,
+                                resultss.insertId,
+                                1,
+                                new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                1
+                            ],
+                            (error_inserts,result_inserts)=>
+                            {
+                                if(error_inserts)
+                                {
+                                    return callback(error_inserts,null);
+                                }
+                            }
+                        )
+                          count++;
+                        }
+                        //again run here pool.query to get tags greater equal 4
+                         
+                        // towards employees with 4 tags matching
+                        pool.query(
+                          `SELECT employee.user_id, employee.name FROM employee_tag e1 
+                          JOIN employee_tag e ON e1.employee_id = e.employee_id 
+                          JOIN employee ON employee.id = e.employee_id 
+                          WHERE e1.tag_id 
+                          IN ( SELECT tag_id FROM jobpost_tag WHERE jobpost_id = ? ) 
+                          GROUP BY e.employee_id HAVING COUNT(DISTINCT e1.tag_id) >= 4 AND COUNT(DISTINCT e1.tag_id) < 5;
+                          `,
+                          [   
+                             resultss.insertId
+                          ],
+                          (error_filter_4,result_filter_4)=>
+                          { 
+    
+                           if(error_filter_4)
+                           {
+                            return callback(error_filter_4,null);
+                           }
+                           if(result_filter_4.length==0)
+                           {
+                            console.log("no data")
+                           }
+                           if(result_filter_4.length<(data.req_employee*5 - count))
+                           { // console.log("if for part 4");
+                            for(const item of result_filter_4)
+                            {
+                              //console.log("if for part 4");
+                                 //making the body of notification
+                                 var employee_name=item.name;
+                                 var employee_id=item.user_id;
+                                 var body="Hey "+employee_name+
+                                 "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+    
+                                 //send the notifcations
+                              pool.query(
+                                `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                                [
+                                    data.title,
+                                    body,
+                                    result[0].id,
+                                    employee_id,
+                                    resultss.insertId,
+                                    1,
+                                    new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                    1
+                                ],
+                                (error_inserts,result_inserts)=>
+                                {
+                                    if(error_inserts)
+                                    {
+                                        return callback(error_inserts,null);
+                                    }
+                                }
+                            )
+                              count++;
+                            }
+                            //again run here pool.query to get tags greater equal 3
+                             
+                            pool.query(
+                              `SELECT employee.user_id, employee.name FROM employee_tag e1 
+                              JOIN employee_tag e ON e1.employee_id = e.employee_id 
+                              JOIN employee ON employee.id = e.employee_id 
+                              WHERE e1.tag_id 
+                              IN ( SELECT tag_id FROM jobpost_tag WHERE jobpost_id = ? ) 
+                              GROUP BY e.employee_id HAVING COUNT(DISTINCT e1.tag_id) >= 3 AND COUNT(DISTINCT e1.tag_id) < 4;
+                              `,
+                              [   
+                                 resultss.insertId
+                              ],
+                              (error_filter_3,result_filter_3)=>
+                              { 
+        
+                               if(error_filter_3)
+                               {
+                                return callback(error_filter_3,null);
+                               }
+                              //  if(result_filter_3.length==0)
+                              //  {
+                              //   console.log("no data")
+                              //  }
+                               if(result_filter_3.length<(data.req_employee*5 - count))
+                               { // console.log("if for part 3");
+                                for(const item of result_filter_3)
+                                {
+                                  //console.log("if for part 3");
+                                     //making the body of notification
+                                     var employee_name=item.name;
+                                     var employee_id=item.user_id;
+                                     var body="Hey "+employee_name+
+                                     "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+        
+                                     //send the notifcations
+                                  pool.query(
+                                    `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                                    [
+                                        data.title,
+                                        body,
+                                        result[0].id,
+                                        employee_id,
+                                        resultss.insertId,
+                                        1,
+                                        new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                        1
+                                    ],
+                                    (error_inserts,result_inserts)=>
+                                    {
+                                        if(error_inserts)
+                                        {
+                                            return callback(error_inserts,null);
+                                        }
+                                    }
+                                )
+                                  count++;
+                                }
+                                 
+                              
+                               }
+    
+                               //else part of filter 3 mean if filter 3 got employees more then 3 times of required then send on first 5 times
+                               //of employees and stop
+                               else{
+                                for(const item in result_filter_3)
+                                {
+                                  if(count>=data.req_employee*5)
+                                  {
+                                    return callback(null,result);
+                                  }
+                                  //send notification query
+    
+                                     
+                                //making the body of notification
+                                var employee_name=item.name;
+                                var employee_id=item.user_id;
+                                var body="Hey "+employee_name+
+                                "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+    
+                                 //sending notifications
+                                 pool.query(
+                                  `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                                  [
+                                      data.title,
+                                      body,
+                                      result[0].id,
+                                      employee_id,
+                                      resultss.insertId,
+                                      1,
+                                      new Date().toISOString().substring(0, 19).replace('T', ' '),
+                                      1
+                                  ],
+                                  (error_inserts,result_inserts)=>
+                                  {
+                                      if(error_inserts)
+                                      {
+                                          return callback(error_inserts,null);
+                                      }
+                                  }
+                              )
+                                 console.log("else part 4th filter");
+                                  count++;
+                                }
+                               }
+        
+                              }
+                            )
+                           }
+
+                           //else part of filter 4 mean if filter 4 got employees nore then 5 times of required then send on first 5 times
+                           //of employees and stop
+                           else{
+                            for(const item in result_filter_4)
+                            {
+                              if(count>=data.req_employee*5)
+                              {
+                                return callback(null,result);
+                              }
+                              //send notification query
+
+                                 
+                            //making the body of notification
+                            var employee_name=item.name;
+                            var employee_id=item.user_id;
+                            var body="Hey "+employee_name+
+                            "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+
+                                        //sending notifications
+                         pool.query(
+                          `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                          [
+                              data.title,
+                              body,
+                              result[0].id,
+                              employee_id,
+                              resultss.insertId,
+                              1,
+                              new Date().toISOString().substring(0, 19).replace('T', ' '),
+                              1
+                          ],
+                          (error_inserts,result_inserts)=>
+                          {
+                              if(error_inserts)
+                              {
+                                  return callback(error_inserts,null);
+                              }
+                          }
+                      )
+                             console.log("else part 4th filter");
+                              count++;
+                            }
+                           }
+    
+                          }
+                        )
+                       }
+
+                       //else part of filter 5 mean if filter 4 got employees nore then 5 times of required then send on first 5 times
+                           //of employees and stop
+                       else{
+                        for(const item in result_filter_5)
+                        {
+                          if(count>=data.req_employee*5)
+                          {
+                            return callback(null,result);
+                          }
+                          //send notification query
+
+                            //making the body of notification
+                            var employee_name=item.name;
+                            var employee_id=item.user_id;
+                            var body="Hey "+employee_name+
+                            "! "+results[0].name +" posted a job "+data.title+" which we have found matching to your profile. Have a look into it. ";
+
+                            //sending notifications
+                             pool.query(
+                           `insert into notification (title, body, sender_id, reciever_id, jobpost_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?)`,
+                           [
+                               data.title,
+                               body,
+                               result[0].id,
+                               employee_id,
+                               resultss.insertId,
+                               1,
+                               new Date().toISOString().substring(0, 19).replace('T', ' '),
+                               1
+                           ],
+                           (error_inserts,result_inserts)=>
+                           {
+                               if(error_inserts)
+                               {
+                                   return callback(error_inserts,null);
+                               }
+                           }
+                       )
+
+                         console.log("else part 5th filter");
+                          count++;
+                        }
+                       }
+
+                      }
+                    )
+
+
                     return callback(null,result);
+
                 }
             )
 
@@ -242,17 +557,17 @@ module.exports={
     getPostById: (body, callback)=>
     {
       pool.query(
-        `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.id = ?`,
-        [body.jobPost_id],
-        (err, result)=>{
-          if(err)
-          {
-            return callback(err,null);
+        `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.action_type <> 3 and j.id=? Order By j.id desc`,
+        [body.jobpost_id],
+        (err, result) => {
+          if (err) {
+            return callback(err, null);
           }
-          console.log(result[0].image_path)
-          return callback(null,result);
+          //console.log(result[0].image_path); // Access the image_path column from the query result
+          return callback(null, result);
         }
-      )
+      );
+      
     },
 
     //get all tags
