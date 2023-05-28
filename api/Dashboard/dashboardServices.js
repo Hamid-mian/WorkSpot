@@ -22,6 +22,7 @@ module.exports={
                 {
                     return callback(error,null);
                 }
+                //checking if the user already have hired the specific user or not on specific post
                 pool.query(
                     `select count(*) as hired from hired_profile where job_post_id=? and employee_id=? and employer_id=?`,
                     [
@@ -37,6 +38,7 @@ module.exports={
                         }
                         if(resul[0].hired<1)
                         {
+                            //getting required data from the jobpost which we will need in the hired profile 
                             pool.query(
                                 `select * from jobpost where id=?`,
                                 [
@@ -47,9 +49,13 @@ module.exports={
                                     {
                                         return callback(err,null);
                                     }
+
+                                    //calculating total price that employer will pay on completion of job
                                     const price=helperfunctions.calculateTotalAmount(results[0].start_time,results[0].end_time,results[0].start_date.toISOString().substring(0, 10),results[0].end_date.toISOString().substring(0, 10),results[0].rate);
                                     const timeDiff=results.start_date - new Date().toISOString().substring(0,19);
                                     const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                                    //assigning status id on the bases of dates (job has been startedor pending)
                                     let id=0;
                                     if(days>0)
                                     {
@@ -59,6 +65,7 @@ module.exports={
                                         id=12
                                     }
             
+                                    //inserting data into the table
                                     pool.query(
                                         `insert into hired_profile (employee_id, employer_id, job_post_id, price, status_id,created_on,action_type) values(?,?,?,?,?,?,?)`,
                                         [
@@ -76,6 +83,7 @@ module.exports={
                                             {
                                                 return callback(error_insert,null);
                                             }
+                                            //getting employer name who is hiring the user as we have user_id as input
                                             var employer_name="hy";
                                             pool.query(`select name from employer where user_id=?`,
                                             [data.employer_id],
@@ -85,17 +93,21 @@ module.exports={
                                                 {return callback(e,nul);} 
                                                 employer_name=r[0].name;
                                                 var job_post_name;
+                                                //getting jobpost title
                                                 pool.query(
                                                     `select title from jobpost where id=?`,
                                                     [result[0].jobpost_id],
                                                     (e,r)=>{
                                                         if(e)
                                                         {return callback(e,nul);} 
+
+                                                        //assigning data to body and title data
                                                         job_post_name=r[0].title;
                                                         var body=
                                                         "Congratulations "+employer_name+
                                                         " has selected you for the job "+job_post_name;
                                                         
+                                                        //inserting data to notification table
                                                         pool.query(
                                                             `insert into notification (title, body, sender_id, reciever_id, jobpost_id, hiredprofile_id, notification_type, created_on, action_type) values(?,?,?,?,?,?,?,?,?)`,
                                                             [
@@ -115,6 +127,8 @@ module.exports={
                                                                 {
                                                                     return callback(error_inserts,null);
                                                                 }
+
+                                                                //as employer has hired an employee then update hired bit in jobpost
                                                                 pool.query(
                                                                     `UPDATE jobpost SET hired_employee = hired_employee + 1 WHERE id = ? `,
                                                                     [

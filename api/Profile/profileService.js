@@ -42,7 +42,7 @@ module.exports={
 //............................getting user to show profile...............................
     getUser: (body,callback)=>{
 
-      //query to get all data from user table, all data from respective employee table and also the tags,skills
+      //query to get all data from user table, all data from respective employee table and also the tags
       pool.query (
        `SELECT u.*, e.*, et.tag_id, es.skill_id
        FROM user u

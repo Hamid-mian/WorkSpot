@@ -5,6 +5,7 @@ const service=require("./homeService");
 
 module.exports={
 
+    //...................job post.................................
     jobPost:(req,res)=>{
         const body=req.body;
         service.jobPost(body,(err,result)=>{
@@ -17,6 +18,7 @@ module.exports={
         })
     },
 
+    //...................job post update....................................
     jobPostUpdate:(req,res)=>{
         const body=req.body;
         service.jobPostUpdate(body,(err,result)=>{
@@ -34,6 +36,8 @@ module.exports={
 
         })
     },
+
+    //...................getting all posts..............................
     getAllPost:(req,res)=>{
         const body=req.body;
         if(!body.page||isNaN(body.page)||body.page<0)
@@ -59,6 +63,8 @@ module.exports={
             res.json({data});
         })
     },
+
+   //...................getting specific post.........................
     getPostById:(req,res)=>{
         const body=req.body;
         service.getPostById(body,(err,result)=>{
@@ -71,7 +77,7 @@ module.exports={
             res.json({data});
     })
     },
-
+    //..................getting all tags.............................
     getAllTags:(req,res)=>{
         const body=req.body;
         service.getAllTags(body,(err,result)=>{
@@ -83,7 +89,7 @@ module.exports={
             res.json({data});
         })
     },
-
+    //.................getting all skills.........................
     getAllSkills:(req,res)=>{
         const body=req.body;
         service.getAllSkills(body,(err,result)=>{

@@ -4,7 +4,7 @@ const helper=require("../helper/helperfunctions");
 
 module.exports={
 
-    //Posting a new job
+    //................Posting a new job....................
 
     jobPost:(data,callback)=>{
 
@@ -405,8 +405,10 @@ module.exports={
     },
 
 
-    //updating post
+    //..................updating post.......................
     jobPostUpdate:(data,callback)=>{
+
+      //cheking if the user exists ir not
       pool.query(
         `select * from jobpost where id=?`,
         [data.id],
@@ -512,9 +514,10 @@ module.exports={
             })
     },
 
-    //getting all posts
+    //................getting all posts.........................
     getAllPost: (body, callback) => {
   
+      //getting all the jobposts regardless of those which are expired
       pool.query(
         `update jobpost set jobpost_status =0 where end_date<?`,
         [new Date().toISOString().substring(0.19).replace(`T`, ` `)],
@@ -523,6 +526,7 @@ module.exports={
           return callback(errr,null);
       }
       const startingLimit=(body.page-1)*body.limit;
+      //getting postcard required from different tables
       pool.query(
         `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.action_type	<> 3 Order By j.id desc LIMIT ${startingLimit},${body.limit}  `,
         [],
@@ -530,6 +534,7 @@ module.exports={
           if (err){
             return callback(err,null);
           } 
+          //getting count for pagination
           pool.query(
             `select count(*) from jobpost where action_type <> 3 `,
             [],
@@ -554,6 +559,7 @@ module.exports={
         },
     
 
+    //.................grtting specific post......................
     getPostById: (body, callback)=>
     {
       pool.query(
@@ -563,14 +569,13 @@ module.exports={
           if (err) {
             return callback(err, null);
           }
-          //console.log(result[0].image_path); // Access the image_path column from the query result
           return callback(null, result);
         }
       );
       
     },
 
-    //get all tags
+    ///.................get all tags................................
     getAllTags: (body,callback)=>{
     pool.query(
       `select id from lookup where name = "tag" `,
@@ -595,7 +600,7 @@ module.exports={
     )
     },
 
-    //get all skills
+    //....................get all skills.............................
     getAllSkills: (body,callback)=>{
       pool.query(
         `select id from lookup where name = "skill" `,

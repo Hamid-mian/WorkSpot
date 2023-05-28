@@ -11,7 +11,14 @@ module.exports={
   //.................post employee......................
   post:(data,callback)=>
   {
+        
         const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+
+
+        //check if the user is here for new entry or update 
+        //For new entry
+
+
         if(data.id===0)
         {
           const query = `INSERT INTO user(user_identity,email, password, verification_code,code_generation_time,is_verified,action_type) VALUES (?, ?, ?, ?, ?, ?, ?)`;
@@ -29,6 +36,10 @@ module.exports={
             ],
             (err, result) => 
             {
+
+              //store error code in variable in order to show it on the screen
+
+              
               if (err) 
               {
                 let finalResult={
@@ -37,6 +48,8 @@ module.exports={
                 }
               return callback(null, finalResult);
               }
+
+              //if user_identity is employee then adding data into the employee table
               if(data.user_identity=='employee')
               {
                 console.log("employee");
@@ -58,6 +71,8 @@ module.exports={
                   }
                 )
               }else
+                //if user_identity is employee then adding data into the employee table
+
               if(data.user_identity=="employer")
               {
                 pool.query(
@@ -85,6 +100,8 @@ module.exports={
           )  
         }
     
+
+        //if user is already exists the update data of that user
         if(data.id>0)
         {
           const query=`select * from user where id = ?`;
@@ -166,6 +183,7 @@ module.exports={
                       return callback(err);
                   } 
               });
+
               //......................getting employee id for the purpose to store tags in employee table 
               pool.query(
                 `select * from employee where user_id=? and action_type<>3 `,
@@ -183,6 +201,7 @@ module.exports={
                     // storing tags into the employee tag table and get 
                     if(data.tag)
                     {
+                      //first delete existing tags then add new tags
                       pool.query(
                         `delete from employee_tag where employee_id=?`,
                         [result_employee[0].id],
@@ -215,7 +234,8 @@ module.exports={
                       
                      
                     }
-                    // will delete all previous tags of specific employee and add new tags
+
+                    // will delete all previous skills of specific employee and add new skills
                     if(data.skill)
                     {
                       pool.query(
@@ -342,7 +362,7 @@ module.exports={
   //....................login user...................
 
   login:(data,callback)=>{
-   
+   //first verify email and user is not deleted
     pool.query(
       `select * from user where email=? and action_type<>3`,
       [
@@ -360,6 +380,8 @@ module.exports={
           }
           return callback(null,finalResult);
         }
+
+        //Match password and email of user
         pool.query(
           `select * from user where email=? and password=?`,
           [ 
@@ -378,6 +400,9 @@ module.exports={
               }
               return callback(null,finalResult);
             }
+
+            //if password match then check is user verified or not
+
             pool.query(
               `select * from user where email=? and is_verified=1`,
               [
@@ -395,6 +420,8 @@ module.exports={
                   return callback(null,finalResult);
                 }
                 var user=resultverify[0];
+
+                //if user is employee then all the employee data to scree
                 if(user.user_identity=="employee")
                 {
                   pool.query(
@@ -410,7 +437,12 @@ module.exports={
                     }
 
                   )
-                }else if(user.user_identity=="employer")
+
+
+                }else 
+                //if user is employer then send all the data to screen
+                
+                if(user.user_identity=="employer")
                 {
                   pool.query(
                     `select * from employer where user_id=? `,
@@ -513,7 +545,10 @@ module.exports={
   // },
 
 //.................reset password employee...................
+
   resetPassword:(data,callback)=>{
+
+    //if user is login then get email and password and update new password
     pool.query(
       `select * from user where email=? and password=?`,
       [
@@ -802,6 +837,8 @@ module.exports={
   //...........Forget Password Employee..............
 
   forgetPassword:(data,callback)=>{
+
+    //if user forget the password then generate new verification code and send email to that verification code 
     pool.query(
       `select * from user where email=?`,
       [data.email],
@@ -843,6 +880,8 @@ module.exports={
 
      //................Create User Image .........................
      imageUpload:(body,file,callback)=>{
+
+      //as we are getting user id we need to check employee or employer then update that table
       pool.query(
         `select * from user where id =?`,
         [body.id],
