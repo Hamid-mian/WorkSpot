@@ -5,57 +5,68 @@ const helper=require("../helper/helperfunctions");
 module.exports={
 
     //.................Get All Users...............//
-  getAllUsers: (body, callback) =>
-   {
-  
-    const startingLimit=(body.page-1)*body.limit;
-    pool.query(
-      `select * from employee LIMIT ${startingLimit},${body.limit}`,
-      [],
-      (err, result)=>{
-        if (err){
+    getAllUsers: (body, callback) =>
+    {
+
+      const startingLimit=(body.page-1)*body.limit;
+      pool.query(
+       `select * from employee LIMIT ${startingLimit},${body.limit}`,
+       [],
+       (err, result)=>{
+         if (err){
+           return callback(err,null);
+         }
+         pool.query(
+           `s{
+             elect count(*) from employee `,
+           [],
+           (error,results)=>
+           {
+             if(error){
+               return callback(error,null);
+             }
+      
+             const data={
+               users:result,
+               totalCount:results[0]["count(*)"],
+             }
+             return callback(null,data);
+           }
+         )
+       }
+      )
+},
+
+
+
+//............................getting user to show profile...............................
+    getUser: (body,callback)=>{
+
+      pool.query (
+       `SELECT u.*, e.*, et.tag_id, es.skill_id
+       FROM user u
+       JOIN employee e ON e.user_id = u.id
+       LEFT JOIN (
+           SELECT employee_id, GROUP_CONCAT(tag_id) AS tag_id
+           FROM employee_tag
+           GROUP BY employee_id
+       ) et ON et.employee_id = e.id
+       LEFT JOIN (
+           SELECT employee_id, GROUP_CONCAT(skill_id) AS skill_id
+           FROM employee_skill
+           GROUP BY employee_id
+       ) es ON es.employee_id = e.id
+       WHERE u.id = ?`,
+       [body.user_id],
+        (err, result) => {
+        if(err)
+        {
           return callback(err,null);
         }
-        pool.query(
-          `s{
-            elect count(*) from employee `,
-          [],
-          (error,results)=>
-          {
-            if(error){
-              return callback(error,null);
-            }
-  
-            const data={
-              users:result,
-              totalCount:results[0]["count(*)"],
-            }
-            return callback(null,data);
-          }
-        )
-      }
-    )
-    },
+        return callback(null,result);
+        }
 
-
-
-    getUser: (data,callback)=>{
-
-      //code not working
-    //   pool.query (
-    //     `select * from user u join employee e on e.user_id=u.id join employee_tag et on et.employee_id=e.id join employee_skill es on es.employee_id=e.id  where u.id=?`,
-    //     [data.user_id],
-    //     (err, result) => {
-    //     if(err)
-    //     {
-    //       return callback(err,null);
-    //     }
-    //     const image_path = result.image_path;
-    // console.log(image_path);
-    //     return callback(null,result);
-    //     }
-
-    //   )
+      )
        
-    }
+    },
 }
