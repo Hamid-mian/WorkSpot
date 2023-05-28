@@ -4,7 +4,7 @@ const helper=require("../helper/helperfunctions");
 
 module.exports={
 
-    //.................Get All Users...............//
+    //.................Get All Users only those who are employees...............//
     getAllUsers: (body, callback) =>
     {
 
@@ -16,9 +16,9 @@ module.exports={
          if (err){
            return callback(err,null);
          }
+         //getting count for pagination
          pool.query(
-           `s{
-             elect count(*) from employee `,
+           `select count(*) from employee `,
            [],
            (error,results)=>
            {
@@ -42,6 +42,7 @@ module.exports={
 //............................getting user to show profile...............................
     getUser: (body,callback)=>{
 
+      //query to get all data from user table, all data from respective employee table and also the tags,skills
       pool.query (
        `SELECT u.*, e.*, et.tag_id, es.skill_id
        FROM user u

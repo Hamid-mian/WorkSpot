@@ -8,6 +8,7 @@ module.exports ={
 
  getAllUsers:(req,res)=>
  {
+    //this extra code is helpful in applying pagination in case user do not tell us pages then we can assume ourself
      const body=req.body;
      if(!body.page||isNaN(body.page)||body.page<0)
      {

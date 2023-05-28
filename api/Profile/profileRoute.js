@@ -5,8 +5,11 @@ const user_controller=require("./profileController");
 
 
 
-//router.post("/profileData",Controller.jobPost);
-
+//....................Get All Employees..........................
 router.get("/getAll",user_controller.getAllUsers);
+
+//.....................Get specigic Employee........................
 router.get("/getuser",user_controller.getUser);
+
+
 module.exports=router;
