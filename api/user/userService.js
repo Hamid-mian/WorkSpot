@@ -425,7 +425,7 @@ module.exports={
                 if(user.user_identity=="employee")
                 {
                   pool.query(
-                    `select * from employee where user_id=? `,
+                    `select e.*, u.email,u.password,u.user_identity from employee e join user u on e.user_id=u.id where user_id=? `,
                     [user.id],
                     (error2,resultemployee)=>
                     {
@@ -445,7 +445,7 @@ module.exports={
                 if(user.user_identity=="employer")
                 {
                   pool.query(
-                    `select * from employer where user_id=? `,
+                    `select e.*, u.email,u.password,u.user_identity from employer e join user u on e.user_id=u.id where user_id=? `,
                     [user.id],
                     (error2,resultemployee)=>
                     {

@@ -395,9 +395,40 @@ module.exports={
             }
         )
       
-    }
+    },
 
-    
+     //.................Get All notifications...............//
+     getAllNotifications: (body, callback) =>
+     {
+ 
+       const startingLimit=(body.page-1)*body.limit;
+       pool.query(
+        `select * from notification where reciever_id=? LIMIT ${startingLimit},${body.limit} `,
+        [body.user_id],
+        (err, result)=>{
+          if (err){
+            return callback(err,null);
+          }
+          //getting count for pagination
+          pool.query(
+            `select count(*) from notification `,
+            [],
+            (error,results)=>
+            {
+              if(error){
+                return callback(error,null);
+              }
+       
+              const data={
+                users:result,
+                totalCount:results[0]["count(*)"],
+              }
+              return callback(null,data);
+            }
+          )
+        }
+       )
+ },
 }
 
 

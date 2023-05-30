@@ -57,5 +57,39 @@ module.exports={
             const data=common.success(result,Messages.Messages.MSG_SAVED,enums.ErrorCode.success);
             res.json({data});
         })
-    }
+    },
+
+    
+ //.......................Get All Notifications...................
+
+ getAllNotifications:(req,res)=>
+ {
+    //this extra code is helpful in applying pagination in case user do not tell us pages then we can assume ourself
+     const body=req.body;
+     if(!body.page||isNaN(body.page)||body.page<0)
+     {
+         body.page=1;
+     }
+     if(!body.limit||isNaN(body.limit)||body.limit<0)
+     {
+         body.limit=5;
+     }
+     service.getAllNotifications(body,(err,result)=>
+     {
+         if (err)
+         {
+             const data=common.error(err,Messages.Messages.MSG_INVALID_DATA,enums.ErrorCode.failed);
+             return res.json({data});
+         }
+         if(result==0)
+         {
+             const data=common.error(Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.not_exist,);
+             return res.json({data});
+         }
+    
+         //call pagination here in place of success
+         const data=common.pagination(result.users,result.totalCount,body.page,body.limit);
+         return res.json({data});
+     });  
+},
 }
