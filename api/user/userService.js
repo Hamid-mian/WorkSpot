@@ -50,7 +50,7 @@ module.exports={
               }
 
               //if user_identity is employee then adding data into the employee table
-              if(data.user_identity=='employee')
+              if(data.role_type=='employee')
               {
                 console.log("employee");
                 pool.query(
@@ -73,7 +73,7 @@ module.exports={
               }else
                 //if user_identity is employee then adding data into the employee table
 
-              if(data.user_identity=="employer")
+              if(data.role_type=="employer")
               {
                 pool.query(
                   `insert into employer(user_id,name,created_on) values(?,?,?)`,
@@ -880,7 +880,7 @@ module.exports={
 
      //................Create User Image .........................
      imageUpload:(body,file,callback)=>{
-
+     
       //as we are getting user id we need to check employee or employer then update that table
       pool.query(
         `select * from user where id =?`,

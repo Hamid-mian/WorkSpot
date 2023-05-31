@@ -7,6 +7,8 @@ const Paths= require("../helper/constants/Paths");
 //........................multer for image storage ..................
 
 //this is used to store file and get path of that file give file uniwue name 
+/* This code is configuring and using the `multer` middleware for handling file uploads in a
+Node.js/Express application. */
 const multer = require("multer");
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -19,6 +21,19 @@ var storage = multer.diskStorage({
 var uploadSingle = multer({
     storage: storage,
 }).single("image_path");
+
+// const multer = require("multer");
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, "./upload/"+ Paths.Paths.USER_IMAGE);
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
+//     },
+// });
+// var upload = multer({
+//     storage: storage,
+// }).single("image");
 router.post("/imageUpload",uploadSingle, user_controller.imageUpload);
 
 

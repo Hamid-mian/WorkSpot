@@ -318,7 +318,7 @@ module.exports={
                 {
                     return callback(err_duplicate,null);
                 }
-                if(resul_duplicate==null)
+                if(resul_duplicate==0)
                 {
                     //getting employee name to use it in title and body of notification
                     var employee_name;
@@ -357,8 +357,8 @@ module.exports={
                                         }
             
                                         //making the body of notification
-                                        var employer_name=re[0].name;
                                         var employer_id=re[0].user_id;
+                                        var employer_name=re[0].name;
                                         var body="Hey "+employer_name+
                                         "! "+employee_name+" showed interest on your job "+job_post_name;
             
@@ -391,7 +391,9 @@ module.exports={
                    
                     })
                 }
-                return callback(null,null);
+                else{
+                    return callback(null,null);
+                }
             }
         )
       
