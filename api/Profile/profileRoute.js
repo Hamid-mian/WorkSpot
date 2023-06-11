@@ -11,5 +11,7 @@ router.get("/getAll",user_controller.getAllUsers);
 //.....................Get specigic Employee........................
 router.get("/getuser",user_controller.getUser);
 
+router.get("/getreviews",user_controller.getreviews);
+
 
 module.exports=router;

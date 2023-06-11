@@ -58,11 +58,25 @@ module.exports={
       //      GROUP BY employee_id
       //  ) es ON es.employee_id = e.id
       //  WHERE u.id = ?`,
-      `SELECT e.*, r.rating, r.review
-      FROM user u
-      LEFT JOIN employee e ON u.id = e.user_id
-      LEFT JOIN review r ON r.to = u.id
-      WHERE u.id = ?`,
+      //`SELECT e.*, GROUP_CONCAT(r.rating) AS ratings, GROUP_CONCAT(r.review) AS reviews FROM user u LEFT JOIN employee e ON u.id = e.user_id LEFT JOIN review r ON r.to = u.id WHERE u.id = 10 GROUP BY e.id`,
+      `SELECT
+      IFNULL(SUM(r.rating)/COUNT(r.rating), 0) AS stars,
+      e.*,
+      u.email,
+      u.user_identity
+    FROM
+      user u
+    JOIN
+      employee e ON u.id = e.user_id
+    LEFT JOIN
+      review r ON r.to = u.id
+    WHERE
+      u.id = ?
+    GROUP BY
+      e.id, u.email, u.user_identity
+    
+    
+      `,
        [body.user_id],
         (err, result) => {
         if(err)
@@ -74,5 +88,37 @@ module.exports={
 
       )
        
+    },
+
+
+    getreviews:(body,callback)=>{
+      const startingLimit=(body.page-1)*body.limit;
+      pool.query(
+        `select r.* from review r where r.to=? LIMIT ${startingLimit},${body.limit}`,
+        [body.user_id],
+        (err, result) => {
+          if(err)
+          {
+            return callback(err,null);
+          }
+           //getting count for pagination
+         pool.query(
+          `select count(r.id) as count from review r where r.to=? `,
+          [body.user_id],
+          (error,results)=>
+          {
+            if(error){
+              return callback(error,null);
+            }
+     
+            const data={
+              users:result,
+              totalCount:results[0].count,
+            }
+            return callback(null,data);
+          }
+        )
+          }
+      )
     },
 }
