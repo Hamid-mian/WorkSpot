@@ -451,6 +451,22 @@ module.exports={
         }
        )
  },
+
+ //...................delete a notifications.....................
+
+    deleteNotification:(body,callback)=>{
+        pool.query(
+            `DELETE FROM notification WHERE id=?`,
+            [body.id],
+            (err, result) => {
+                if(err)
+                {
+                  return callback(err,null);
+                }
+                return callback(null,result);
+                }
+        )
+    }
 }
 
 

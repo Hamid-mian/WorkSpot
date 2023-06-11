@@ -14,4 +14,6 @@ router.post("/applyJob",Controller.applyJob);
 //....................Get All Employees..........................
 router.post("/getAllNotification",Controller.getAllNotifications);
 
+router.post("/deletenotification",Controller.deleteNotification);
+
 module.exports=router;
