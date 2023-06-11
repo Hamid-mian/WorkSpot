@@ -22,25 +22,14 @@ var uploadSingle = multer({
     storage: storage,
 }).single("image_path");
 
-// const multer = require("multer");
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, "./upload/"+ Paths.Paths.USER_IMAGE);
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
-//     },
-// });
-// var upload = multer({
-//     storage: storage,
-// }).single("image");
+
 router.post("/imageUpload",uploadSingle, user_controller.imageUpload);
 
 
 
 router.post("/post", user_controller.post);
 
-router.get("/verifyCode",user_controller.verifyCode);
+router.post("/verifyCode",user_controller.verifyCode);
 
 router.post("/login",user_controller.login);
 router.post("/resetPassword",user_controller.resetPassword);

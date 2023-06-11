@@ -6,12 +6,12 @@ const Controller=require("./dasboardController");
 
 
 router.post("/hiredProfilePost",Controller.hiredProfile);
-router.get(`/dashboardApi`,Controller.dashboardApi);
+router.post(`/dashboardApi`,Controller.dashboardApi);
 router.post("/applyJob",Controller.applyJob);
 
 
 
 //....................Get All Employees..........................
-router.get("/getAllNotification",Controller.getAllNotifications);
+router.post("/getAllNotification",Controller.getAllNotifications);
 
 module.exports=router;

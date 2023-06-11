@@ -44,20 +44,25 @@ module.exports={
 
       //query to get all data from user table, all data from respective employee table and also the tags
       pool.query (
-       `SELECT u.*, e.*, et.tag_id, es.skill_id
-       FROM user u
-       JOIN employee e ON e.user_id = u.id
-       LEFT JOIN (
-           SELECT employee_id, GROUP_CONCAT(tag_id) AS tag_id
-           FROM employee_tag
-           GROUP BY employee_id
-       ) et ON et.employee_id = e.id
-       LEFT JOIN (
-           SELECT employee_id, GROUP_CONCAT(skill_id) AS skill_id
-           FROM employee_skill
-           GROUP BY employee_id
-       ) es ON es.employee_id = e.id
-       WHERE u.id = ?`,
+      //  `SELECT u.*, e.*, et.tag_id, es.skill_id
+      //  FROM user u
+      //  JOIN employee e ON e.user_id = u.id
+      //  LEFT JOIN (
+      //      SELECT employee_id, GROUP_CONCAT(tag_id) AS tag_id
+      //      FROM employee_tag
+      //      GROUP BY employee_id
+      //  ) et ON et.employee_id = e.id
+      //  LEFT JOIN (
+      //      SELECT employee_id, GROUP_CONCAT(skill_id) AS skill_id
+      //      FROM employee_skill
+      //      GROUP BY employee_id
+      //  ) es ON es.employee_id = e.id
+      //  WHERE u.id = ?`,
+      `SELECT e.*, r.rating, r.review
+      FROM user u
+      LEFT JOIN employee e ON u.id = e.user_id
+      LEFT JOIN review r ON r.to = u.id
+      WHERE u.id = ?`,
        [body.user_id],
         (err, result) => {
         if(err)

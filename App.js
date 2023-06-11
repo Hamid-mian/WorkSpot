@@ -14,7 +14,7 @@ app.use("/api/users", userRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/profile", ProfileRouter);
 app.use("/api/dashboard", DashboardRouter);
-
+app.use(express.static("./upload"));
 const port = process.env.PORT || 3100;
 app.listen(port, () => {
   console.log("server up and running on PORT :", port);

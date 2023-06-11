@@ -1,4 +1,5 @@
 const pool =require("../../config/database");
+const Enums = require("../helper/constants/Enums");
 const Messages = require("../helper/constants/Messages");
 const paths=require("../helper/constants/Paths");
 const helper=require("../helper/helperfunctions");
@@ -167,7 +168,7 @@ module.exports={
     },
  
     //..........................Dash Board API................................................
-    dashboardApi:(data,callback)=>
+    dashboardApi:(data, callback)=>
     {
 
         //when ever user load dashboard job statuses updated on the bases of current date
@@ -215,7 +216,10 @@ module.exports={
                  {
                     return callback(err,null);
                  }
-
+                if(result_user_identity.length==0)
+                {
+                    return callback(null,null);
+                }
                  //if user is employee then getting required data for employee 
                  if(result_user_identity[0].user_identity=="employee")
                  {
@@ -242,11 +246,15 @@ module.exports={
                                          return callback(error,null);
                                      }
                                      //calculating order percentage
-                                     let order=helperfunctions.percentageCalculate(totalCount[0].total,completeCount[0].complete);
+                                      let order=helperfunctions.percentageCalculate(totalCount[0].total,completeCount[0].complete);
                                     
                                      //getting employee data from different tables
                                      pool.query(
-                                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from hired_profile h join user u on h.employer_id=u.id join jobpost j on h.job_post_id=j.id join employer e on u.id=e.user_id where h.employee_id=?`,
+                                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from
+                                          hired_profile h join user u on h.employer_id=u.id 
+                                          join jobpost j on h.job_post_id=j.id 
+                                          join employer e on u.id=e.user_id
+                                           where h.employee_id=?`,
                                          [data.user_id],
                                          (error,result)=>
                                          {
@@ -254,14 +262,16 @@ module.exports={
                                              {
                                                  return callback(error,null);
                                              }
+                                            
                                              let finalResult={
                                                  order:order,
-                                                 status_id:result[0].status_id,
-                                                 price:result[0].price,
-                                                 employer_name:result[0].employer_name,
-                                                 image_path:result[0].image_path,   
-                                                 title:result[0].title,
-                                                 end_date:result[0].end_date,
+                                                 results:result
+                                                //  status_id:result[0].status_id,
+                                                //  price:result[0].price,
+                                                //  employer_name:result[0].employer_name,
+                                                //  image_path:result[0].image_path,   
+                                                //  title:result[0].title,
+                                                //  end_date:result[0].end_date,
                                              }
                                              return callback(null,finalResult);
                                          }
@@ -405,7 +415,17 @@ module.exports={
  
        const startingLimit=(body.page-1)*body.limit;
        pool.query(
-        `select * from notification where reciever_id=? LIMIT ${startingLimit},${body.limit} `,
+        `SELECT n.*, 
+        CASE 
+            WHEN u.user_identity = 'employee' THEN e.image_path
+            WHEN u.user_identity = 'employer' THEN er.image_path
+        END AS image_path
+    FROM notification n
+    JOIN user u ON n.sender_id = u.id
+    LEFT JOIN employee e ON e.user_id = u.id
+    LEFT JOIN employer er ON er.user_id = u.id
+    WHERE n.reciever_id = ?
+    LIMIT ${startingLimit},${body.limit} `,
         [body.user_id],
         (err, result)=>{
           if (err){
@@ -413,8 +433,8 @@ module.exports={
           }
           //getting count for pagination
           pool.query(
-            `select count(*) from notification `,
-            [],
+            `select count(*) from notification where reciever_id=?`,
+            [body.user_id],
             (error,results)=>
             {
               if(error){

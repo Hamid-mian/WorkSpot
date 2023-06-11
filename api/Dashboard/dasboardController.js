@@ -35,6 +35,7 @@ module.exports={
                 const data=common.error(err,Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.failed);
                 return res.json({data});
             }
+           
             const data=common.success(result,Messages.Messages.MSG_DATA_FOUND,enums.ErrorCode.success);
             res.json({data});
         })
