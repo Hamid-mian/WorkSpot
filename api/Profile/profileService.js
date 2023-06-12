@@ -63,7 +63,8 @@ module.exports={
       IFNULL(SUM(r.rating)/COUNT(r.rating), 0) AS stars,
       e.*,
       u.email,
-      u.user_identity
+      u.user_identity,
+      u.id
     FROM
       user u
     JOIN

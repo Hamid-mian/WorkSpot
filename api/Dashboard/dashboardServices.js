@@ -250,7 +250,7 @@ module.exports={
                                     
                                      //getting employee data from different tables
                                      pool.query(
-                                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from
+                                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date, u.id as user_id from
                                           hired_profile h join user u on h.employer_id=u.id 
                                           join jobpost j on h.job_post_id=j.id 
                                           join employer e on u.id=e.user_id
@@ -298,15 +298,15 @@ module.exports={
                              {
                                  return callback(error,null);
                              }
-                             let finalResult={
-                                 status_id:result[0].status_id,
-                                 price:result[0].price,
-                                 employer_name:result[0].employer_name,
-                                 image_path:result[0].image_path,
-                                 title:result[0].title,
-                                 end_date:result[0].end_date,
-                             }
-                             return callback(null,finalResult);
+                            //  let finalResult={
+                            //      status_id:result[0].status_id,
+                            //      price:result[0].price,
+                            //      employer_name:result[0].employer_name,
+                            //      image_path:result[0].image_path,
+                            //      title:result[0].title,
+                            //      end_date:result[0].end_date,
+                            //  }
+                             return callback(null,result);
                          }
                      )
                  }
