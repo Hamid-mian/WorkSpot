@@ -92,5 +92,30 @@ module.exports ={
         return res.json({data});
        });  
     },
+
+
+    //
+
+    postReview:(req,res)=>
+        {
+           const body = req.body;
+           service.postReview(body,(err,result)=>
+           {
+            if (err)
+            {
+                const data=common.error(err,messages.Messages.MSG_INVALID_DATA,Enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            if(result==0)
+            {
+                const data=common.error(messages.Messages.MSG_no_to_user_exist,Enums.ErrorCode.not_exist,);
+                return res.json({data});
+            }
+                const data=common.success(result,messages.Messages.MSG_SAVED,Enums.ErrorCode.success);
+                return res.json({data});
+            
+           
+           });  
+        },
 }
 

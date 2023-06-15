@@ -130,4 +130,38 @@ module.exports={
           }
       )
     },
+
+    postReview:(body,callback)=>{
+      pool.query(
+        `select * from user where id=?`,
+        [body.to],
+        (err,result)=>{
+          if(err){
+            return callback(err,null)
+          }
+          if(result==0)
+          {
+            return callback(null,result)
+          }
+          pool.query(
+            "Insert into review (rating,review,`to`,`from`) values(?,?,?,?)",
+            [
+              body.stars,
+              body.review,
+              body.to,
+              body.from
+            ],
+            (error,results)=>
+            {
+              if(error)
+              {
+                return callback(error,null);
+              }
+              return callback(null,results);
+            }
+
+          )
+        }
+      )
+    }
 }

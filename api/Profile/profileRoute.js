@@ -12,6 +12,7 @@ router.get("/getAll",user_controller.getAllUsers);
 router.post("/getuser",user_controller.getUser);
 
 router.post("/getreviews",user_controller.getreviews);
+router.post("/postReview",user_controller.postReview);
 
 
 module.exports=router;

@@ -44,5 +44,6 @@ module.exports = {
                 MSG_NOT_VERIFIED:"User Is not verified",
                 MSG_NOTIFICATION_HIRED:"Job Offer",
                 MSG_Mail_already_exist:"This user already exists",
+                MSG_no_to_user_exist:"This to user does not exist",
         }       
 }
