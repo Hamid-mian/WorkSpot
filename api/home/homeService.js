@@ -575,6 +575,26 @@ module.exports={
       
     },
 
+    //.................grtting all post of specific employer......................
+    getEmployerPost: (body, callback)=>
+    {
+      pool.query(
+        `select j.*, e.image_path from jobpost j 
+        join employer e on j.employer_id = e.id 
+        where j.action_type <> 3 and j.employer_id=? 
+        Order By j.id desc`,
+        [body.employer_id],
+        (err, result) => {
+          if (err) {
+            return callback(err, null);
+          }
+          return callback(null, result);
+        }
+      );
+      
+    },
+
+
     ///.................get all tags................................
     getAllTags: (body,callback)=>{
     pool.query(
@@ -623,7 +643,23 @@ module.exports={
           )
         }
       )
-      }
+      },
     
+
+       //...................delete a Job.....................
+
+       deletePostById:(body,callback)=>{
+      pool.query(
+          `DELETE FROM jobpost WHERE id=?`,
+          [body.jobpost_id],
+          (err, result) => {
+              if(err)
+              {
+                return callback(err,null);
+              }
+              return callback(null,result);
+              }
+      )
+  }
 
 }

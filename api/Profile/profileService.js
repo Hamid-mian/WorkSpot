@@ -95,7 +95,15 @@ module.exports={
     getreviews:(body,callback)=>{
       const startingLimit=(body.page-1)*body.limit;
       pool.query(
-        `select r.* from review r where r.to=? LIMIT ${startingLimit},${body.limit}`,
+        `SELECT r.*,
+        CASE WHEN u.user_identity = 'employee' THEN e.image_path ELSE er.image_path END AS image_path,
+        CASE WHEN u.user_identity = 'employee' THEN e.name ELSE er.name END AS name
+        FROM user u
+        JOIN review r ON r.from = u.id
+        LEFT JOIN employee e ON e.user_id = u.id
+        LEFT JOIN employer er ON er.user_id = u.id
+        WHERE r.to = ?
+        LIMIT ${startingLimit},${body.limit}`,
         [body.user_id],
         (err, result) => {
           if(err)

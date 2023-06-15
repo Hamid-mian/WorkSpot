@@ -73,10 +73,31 @@ module.exports={
                 const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
                 return res.json({data});
             }
+            
             const data=common.success(result,Messages.Messages.MSG_DATA_FOUND,enums.ErrorCode.success);
             res.json({data});
     })
     },
+
+    //...................getting specific employer posts.........................
+    getEmployerPost:(req,res)=>{
+        const body=req.body;
+        service.getEmployerPost(body,(err,result)=>{
+            if(err)
+            {
+                const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
+                return res.json({data});
+            }
+            if(result==0)
+            {
+                const data=common.error(Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.not_exist,);
+                return res.json({data});
+            }
+            const data=common.success(result,Messages.Messages.MSG_DATA_FOUND,enums.ErrorCode.success);
+            res.json({data});
+    })
+    },
+    //
     //..................getting all tags.............................
     getAllTags:(req,res)=>{
         const body=req.body;
@@ -101,4 +122,24 @@ module.exports={
             res.json({data});
         })
     },
+
+    //...................delete a job.....................
+    deletePostById:(req,res)=>
+{
+    const body=req.body;
+    service.deletePostById(body,(err,result)=>{
+        if(err){
+            const data=common.error(err,Messages.Messages.MSG_DB_CONNECTION_ERROR,enums.ErrorCode.failed);
+            return res.json({data});
+        }
+        if(result.affectedRows==0)
+         {
+             const data=common.error(Messages.Messages.MSG_NO_RECORD,enums.ErrorCode.not_exist,);
+             return res.json({data});
+         }
+        const data=common.success(result,Messages.Messages.MSG_DELETE_SUCCESS,enums.ErrorCode.success);
+        res.json({data});
+    });
+  
+},
 }

@@ -670,7 +670,6 @@ module.exports={
 
      //................Create User Image .........................
      imageUpload:(body,file,callback)=>{
-     
       //as we are getting user id we need to check employee or employer then update that table
       pool.query(
         `select * from user where id =?`,
@@ -703,8 +702,10 @@ module.exports={
               }
               )  
           }
+
           if(result[0].user_identity=="employer")
-          {
+          {    
+
             pool.query(
               `update employer set image_path=? where user_id=? `,
               [
@@ -724,4 +725,5 @@ module.exports={
       )
       
 },
+
 }

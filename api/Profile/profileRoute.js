@@ -9,9 +9,9 @@ const user_controller=require("./profileController");
 router.get("/getAll",user_controller.getAllUsers);
 
 //.....................Get specigic Employee........................
-router.get("/getuser",user_controller.getUser);
+router.post("/getuser",user_controller.getUser);
 
-router.get("/getreviews",user_controller.getreviews);
+router.post("/getreviews",user_controller.getreviews);
 
 
 module.exports=router;
