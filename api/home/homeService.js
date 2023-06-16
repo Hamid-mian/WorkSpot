@@ -563,7 +563,7 @@ module.exports={
     getPostById: (body, callback)=>
     {
       pool.query(
-        `select j.*, e.image_path from jobpost j join employer e on j.employer_id = e.id where j.action_type <> 3 and j.id=? Order By j.id desc`,
+        `select j.*, e.image_path,e.name from jobpost j join employer e on j.employer_id = e.id where j.action_type <> 3 and j.id=?`,
         [body.jobpost_id],
         (err, result) => {
           if (err) {

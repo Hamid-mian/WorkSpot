@@ -140,7 +140,7 @@ module.exports={
                                                                         {
                                                                             return callback(error_udate,null);
                                                                         }
-                                                                        return callback(result_inserts);
+                                                                        return callback(null,result_inserts);
                                                                      }
 
                                                                 )
@@ -290,7 +290,7 @@ module.exports={
                  if(result_user_identity[0].user_identity=="employer")
                  {
                      pool.query(
-                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date from hired_profile h join user u on h.employee_id=u.id join jobpost j on h.job_post_id=j.id join employee e on u.id=e.user_id where h.employer_id=?`,
+                         `select h.status_id, h.price, e.name, e.image_path, j.title, j.end_date,u.id as user_id from hired_profile h join user u on h.employee_id=u.id join jobpost j on h.job_post_id=j.id join employee e on u.id=e.user_id where h.employer_id=?`,
                          [data.user_id],
                          (error,result)=>
                          {

@@ -13,6 +13,7 @@ router.post("/getuser",user_controller.getUser);
 
 router.post("/getreviews",user_controller.getreviews);
 router.post("/postReview",user_controller.postReview);
+router.post("/getEmployeeSkillTag",user_controller.getEmployeeSkillTag);
 
 
 module.exports=router;
