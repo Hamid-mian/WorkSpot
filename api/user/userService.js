@@ -669,7 +669,7 @@ module.exports={
   },
 
      //................Create User Image .........................
-     imageUpload:(body,file,callback)=>{
+     imageUpload:(body, file, callback)=>{
       //as we are getting user id we need to check employee or employer then update that table
       pool.query(
         `select * from user where id =?`,
@@ -686,19 +686,20 @@ module.exports={
             }
             return callback(null,finalResult);
           }
+          var path = Paths.Paths.USER_IMAGE+ "/" +file.filename;
           if(result[0].user_identity=="employee")
           {
             pool.query(
               `update employee set image_path=? where user_id=? `,
               [
-                Paths.Paths.USER_IMAGE+ "/" +file.filename,
+                path,
                 result[0].id
               ],
               (error,results)=>{
                 if(error){
                  return  callback(error,null);
                 }
-                return callback(null,results)
+                return callback(null, { image_path: path });
               }
               )  
           }
@@ -716,7 +717,7 @@ module.exports={
                 if(error){
                  return  callback(error,null);
                 }
-                return callback(null,results)
+                return callback(null, { image_path: path });
               }
               )  
           }
