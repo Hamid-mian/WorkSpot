@@ -649,17 +649,39 @@ module.exports={
        //...................delete a Job.....................
 
        deletePostById:(body,callback)=>{
-      pool.query(
-          `DELETE FROM jobpost WHERE id=?`,
+        pool.query(
+          `DELETE FROM notification WHERE jobpost_id=?`,
           [body.jobpost_id],
           (err, result) => {
               if(err)
               {
                 return callback(err,null);
               }
-              return callback(null,result);
+              pool.query(
+                `delete from jobpost_tag where jobpost_id=?`,
+                [body.jobpost_id],
+                (err, result) => {
+                    if(err)
+                    {
+                      return callback(err,null);
+                    }
+                    pool.query(
+                      `DELETE FROM jobpost WHERE id=?`,
+                      [body.jobpost_id],
+                      (err, result) => {
+                          if(err)
+                          {
+                            return callback(err,null);
+                          }
+                          return callback(null,result);
+                          }
+                  )
+                  }
+              )
+             
               }
-      )
+          )
+    
   }
 
 }

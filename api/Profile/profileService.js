@@ -115,6 +115,12 @@ module.exports={
           {
             return callback(null,result)
           }
+          // pool.query(
+          //   "select * from review where `to`=? and `from`=? ",
+          //   [body.to,
+          //   body.from]
+          // )
+
           pool.query(
             "Insert into review (rating,review,`to`,`from`) values(?,?,?,?)",
             [
