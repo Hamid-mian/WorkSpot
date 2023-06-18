@@ -467,6 +467,11 @@ module.exports={
             values.push(data.endDate);
             isFirst=false;
           }
+          if(data.rate){
+            query+=`${isFirst ? ' ': ' '}rate=?, `;
+            values.push(data.rate);
+            isFirst=false;
+          }
           if(data.req_employee){
             query+=`${isFirst ? ' ': ' '}req_employee = ?, `;
             values.push(data.req_employee);
