@@ -476,19 +476,29 @@ module.exports={
 
           if(data.tag)
           {
-            for (const tag of data.tag)
-            {
+            pool.query(
+              `delete from jobpost_tag where jobpost_id=?`,
+              [data.id],
+              (err, result) => {
+                  if(err)
+                  {
+                    return callback(err,null);
+                  }
+                  for (const tag of data.tag)
+                   {
                       pool.query(
-                        `update jobpost_tag set name=? where jobpost_id=? `,
-                        [tag.name,data.id],
+                        `insert into jobpost_tag (tag_id, jobpost_id) values(?,?) `,
+                        [tag.tag_id,data.id],
                         (err,result)=>{
                           if(err)
                           {
                             return callback(err,null);
                           }
-                          return callback(null,result);
                         })
                     }
+                }
+            )
+            
           }
             query+=`${isFirst ? ' ': ' '}updated_on=?, `;
             values.push(new Date().toISOString().substring(0, 19).replace('T', ' '));
