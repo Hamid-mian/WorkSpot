@@ -447,24 +447,24 @@ module.exports={
             values.push(data.location);
             isFirst=false;
           }
-          if(data.startTime){
+          if(data.start_time){
             query+=`${isFirst ? ' ': ' '}start_time=?, `;
-            values.push(data.startTime);
+            values.push(data.start_time);
             isFirst=false;
           }
-          if(data.endTime){
+          if(data.end_time){
             query+=`${isFirst ? ' ': ' '}end_time=?, `;
-            values.push(data.endTime);
+            values.push(data.end_time);
             isFirst=false;
           }
-          if(data.startDate){
+          if(data.start_date){
             query+=`${isFirst ? ' ': ' '}start_date=?, `;
-            values.push(data.startDate);
+            values.push(data.start_date);
             isFirst=false;
           }
-          if(data.endDate){
+          if(data.end_date){
             query+=`${isFirst ? ' ': ' '}end_date=?, `;
-            values.push(data.endDate);
+            values.push(data.end_date);
             isFirst=false;
           }
           if(data.rate){
@@ -681,7 +681,7 @@ module.exports={
                       return callback(err,null);
                     }
                     pool.query(
-                      `DELETE FROM jobpost WHERE id=?`,
+                      `update jobpost set action_type=3 WHERE id=?`,
                       [body.jobpost_id],
                       (err, result) => {
                           if(err)
