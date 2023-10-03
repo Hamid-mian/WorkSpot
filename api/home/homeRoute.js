@@ -7,7 +7,7 @@ const Controller=require("./homeController");
 
 router.post("/jobpost",Controller.jobPost);
 router.post("/jobPostUpdate",Controller.jobPostUpdate);
-router.get("/getAllPost",Controller.getAllPost);
+router.post("/getAllPost",Controller.getAllPost);
 router.post("/getPostById",Controller.getPostById);
 router.post("/deletePostById",Controller.deletePostById);
 

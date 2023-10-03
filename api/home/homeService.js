@@ -35,10 +35,10 @@ module.exports={
                     data.title,
                     data.description,
                     data.location,
-                    data.startTime,
-                    data.endTime,
-                    data.startDate,
-                    data.endDate,
+                    data.start_time,
+                    data.end_time,
+                    data.start_date,
+                    data.end_date,
                     data.rate,
                     data.req_employee,
                     new Date().toISOString().substring(0, 19).replace('T', ' '),
@@ -551,7 +551,7 @@ module.exports={
           } 
           //getting count for pagination
           pool.query(
-            `select count(*) from jobpost where action_type <> 3 `,
+            `select count(*) from jobpost j join employer e on j.employer_id = e.id where j.action_type	<> 3`,
             [],
             (error,results)=>
             {
